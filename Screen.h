@@ -29,18 +29,19 @@ const float PI = 3.14;	// Tilnermingsverdi for pi
 
 class Screen {
 	
-	// Standardverdi for bakgrunn og maling
-	static const char DEFAULTBACKGROUND = 176;
-	static const char DEFAULTINK = 178;
-	
-	int width, height;				// Vidden og Høyden på tegneflaten
-	char backgroundChar, ink;		// Bakgrunn og maling
-	std::string content;			// string til å holde tegneflaten
-	
-	// Interne utility funksjoner
-	bool within(const int x, const int y);	// Sjekk om (x, y) er innenfor
-	bool swap(int &a, int &b);				// swapper intene a og b
-	bool swap(float &a, float &b);			// swapper floatene a og b
+	private:
+		// Standardverdi for bakgrunn og maling
+		static const char DEFAULTBACKGROUND = 176;
+		static const char DEFAULTINK = 178;
+		
+		int width, height;				// Vidden og Høyden på tegneflaten
+		char backgroundChar, ink;		// Bakgrunn og maling
+		std::string content;			// string til å holde tegneflaten
+		
+		// Interne utility funksjoner
+		bool within(const int x, const int y);	// Sjekk om (x, y) er innenfor
+		bool swap(int &a, int &b);				// swapper intene a og b
+		bool swap(float &a, float &b);			// swapper floatene a og b
 	
 	public:
 	
