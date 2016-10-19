@@ -13,6 +13,7 @@
 #include <string>
 
 class SvgWriter {
+	
 	private:
 		std::string outputString;				// det som skal dumpes i filen
 		std::string path;						// path til filen
@@ -53,6 +54,7 @@ class SvgWriter {
 // Returnerer en ferdigformatert string med style info. Kan puttes direkte inn
 //	i style feltet i foreks en linje i svg.
 std::string SvgWriter::styles() {
+	
 	std::ostringstream oss;
 	oss << "stroke:" << strokeColor << ";stroke-width:" << 
 				strokeWidth << ";stroke-linecap:" << lineCap << 
@@ -67,12 +69,14 @@ SvgWriter::SvgWriter(std::string path, int width, int height): path(path),
 		outputString(""), strokeColor("rgb(0,0,0)"), strokeWidth("2"), 
 		lineCap("round"), opacity("1"), fill("rgb(0,0,0)"), 
 		width(width), height(height) {
+			
 }
 
 //---------------------------SETTERE OG GETTERE---------------------------------
 
 // Tar en farge på formen (int, int, int) og setter 'strokeColor' lik denne.
 void SvgWriter::setStrokeColor(int r, int g, int b) {
+	
 	std::ostringstream oss;
 	oss << "rgb(" << r << "," << g << "," << b << ")";
 	strokeColor = oss.str();
@@ -80,6 +84,7 @@ void SvgWriter::setStrokeColor(int r, int g, int b) {
 
 // Tar en vidde på formen int og setter 'strokeWidth' lik denne
 void SvgWriter::setStrokeWidth(int w) {
+	
 	std::ostringstream oss;
 	oss << w;
 	strokeWidth = oss.str();
@@ -87,12 +92,14 @@ void SvgWriter::setStrokeWidth(int w) {
 
 // Tar en opacity på formen float og setter 'opacity' lik denne
 void SvgWriter::setOpacity(float opacity) {
+	
 	std::ostringstream oss;
 	oss << opacity;
 	this->opacity = oss.str();
 }
 
 void SvgWriter::setFill(int r, int g, int b) {
+	
 	std::ostringstream oss;
 	oss << "rgb(" << r << "," << g << "," << b << ")";
 	fill = oss.str();
@@ -106,6 +113,7 @@ void SvgWriter::setFill(int r, int g, int b) {
 //	Returnerer true hvis den klarte å tegne, false hvis ikke (ikke implementert
 //	enda)
 bool SvgWriter::line(float x1, float y1, float x2, float y2) {
+	
 	std::ostringstream oss;
 	oss << "\t<line x1='" << x1 << "' y1='" << y1 << "' x2='" << x2 << 
 			"' y2='" << y2 << "' style='" << styles	() << "'/>\n";
@@ -120,6 +128,7 @@ bool SvgWriter::line(float x1, float y1, float x2, float y2) {
 //	Returnerer true hvis den klarte å tegne, false hvis ikke (ikke implementert
 //	enda)
 bool SvgWriter::rect(float x, float y, float w, float h) {
+	
 	std::ostringstream oss;
 	oss << "<rect x='" << x << "' y='" << y << "' width='" << w << 
 			"' height='" << h << "' style='" << styles() << "'/>\n";
@@ -134,6 +143,7 @@ bool SvgWriter::rect(float x, float y, float w, float h) {
 //	Returnerer true hvis den klarte å tegne, false hvis ikke (ikke implementert
 //	enda)
 bool SvgWriter::circle(float x, float y, float r) {
+	
 	std::ostringstream oss;
 	oss << "<circle cx='" << x << "' cy='" << y << "' r='" << r << "' style='" 
 			<< styles() << "'/>\n";
@@ -145,6 +155,7 @@ bool SvgWriter::circle(float x, float y, float r) {
 // Dumper 'outputString' i en svg fil ved 'path'. Dumper en fast header + vidde
 //  og bredde + innmaten ('outputString')
 void SvgWriter::write() {
+	
 	std::ofstream file;
 	
 	file.open(path.c_str());

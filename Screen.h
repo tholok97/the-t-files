@@ -44,7 +44,6 @@ class Screen {
 		bool swap(float &a, float &b);			// swapper floatene a og b
 	
 	public:
-	
 		// Constructors:
 		Screen(const int width, const int height, 
 				const char backgroundChar, const char ink);
@@ -74,6 +73,7 @@ class Screen {
 // Sjekker om (x, y) er innenfor tegneflaten og returnerer en passende bool
 //  verdi
 bool Screen::within(const int x, const 	int y) {
+	
 	if (x > width-1 || x < 0 || y > height-1 || y < 0)
 		return false;
 	else
@@ -82,6 +82,7 @@ bool Screen::within(const int x, const 	int y) {
 
 // Swap intene a og b
 bool Screen::swap(int &a, int &b) {
+	
 	int save = a;
 	a = b;
 	b = save;
@@ -89,6 +90,7 @@ bool Screen::swap(int &a, int &b) {
 
 // Swapper floatene a og b
 bool Screen::swap(float &a, float &b) {
+	
 	float save = a;
 	a = b;
 	b = save;
@@ -100,7 +102,7 @@ bool Screen::swap(float &a, float &b) {
 //  og maling. Fyller tegneflaten med bakgrunnsmaling
 Screen::Screen(const int width, const int height, const char backgroundChar, 
 		const char ink) {
-	
+			
 	// Initialiserer variabler
 	this->width = width;
 	this->height = height;
@@ -235,6 +237,7 @@ bool Screen::drawRect(int x, int y, const int width,
 
 // Nullstiller tegneflaten. Fyller den med bakgrunn
 void Screen::clear() {
+	
 	content = "";
 	for (int i = 0; i < height; ++i) {
 		for (int j = 0; j < width; ++j) {
@@ -245,6 +248,7 @@ void Screen::clear() {
 
 // Print ut tegneflaten
 void Screen::print() {
+	
 	for (int i = 0; i < height; ++i) {
 		for (int j = 0; j < width; ++j) {
 			std::cout << content[width*i + j];

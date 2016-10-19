@@ -41,28 +41,27 @@
 
 class CA {
 	
-	// Standardverdi i tilfelle disse ikke blir spesifisert
-	static const int DEFAULTRULESET = 30;			// standardverdi ruleset
-	static const char DEFAULTBACKGROUND = '0';		// standardverdi bakgrunn
-	static const char DEFAULTINK = '1';				// standardverdi ink
-	
-	// typedef av vec siden det brukes over gjennom hele koden
-	typedef std::vector<bool>  vec;
-	
-	vec arr; 		// den nåværende tilstanden til systemet
-	vec ruleset;	// regelsettet å bruke på systemet for hvert steg
-	int gen;		// hvilken "generasjon" systemet er i
-	
-	
-	// Interne utility funksjoner:
-	void init(const vec initArr, const int rulesetInt);		// initialiserer
-	vec rulesetIntToVec(const int rulesetInt);				// int til vec
-	bool rules(const bool a, const bool b, const bool c); 	// Gir ny x verdi 
-															// gitt x-1, x, x+1
-	
-	// offentlige funksjoner følger:
+	private:
+		// Standardverdi i tilfelle disse ikke blir spesifisert
+		static const int DEFAULTRULESET = 30;			// default ruleset
+		static const char DEFAULTBACKGROUND = '0';		// default bakgrunn
+		static const char DEFAULTINK = '1';				// default ink
+		
+		// typedef av vec siden det brukes over gjennom hele koden
+		typedef std::vector<bool>  vec;
+		
+		vec arr; 		// den nåværende tilstanden til systemet
+		vec ruleset;	// regelsettet å bruke på systemet for hvert steg
+		int gen;		// hvilken "generasjon" systemet er i
+		
+		
+		// Interne utility funksjoner:
+		void init(const vec initArr, const int rulesetInt);		// initialiserer
+		vec rulesetIntToVec(const int rulesetInt);				// int til vec
+		bool rules(const bool a, const bool b, const bool c); 	// Gir ny x gitt 
+																//  x-1, x, x+1
+		
 	public:
-	
 		// Constructors:
 		CA(const vec initArr, const int rulesetInt);
 		CA(const vec initArr);				
@@ -88,6 +87,7 @@ class CA {
 // Initialiserer systemet med utgangsvec og spesifisert regelsett. Regelsett
 //  gis som int, oversettes til vec. Alle constructors ender opp her
 void CA::init(const vec initArr, const int rulesetInt) {
+	
 	arr = initArr;
 	ruleset = rulesetIntToVec(rulesetInt);
 	gen = 0;
@@ -96,6 +96,7 @@ void CA::init(const vec initArr, const int rulesetInt) {
 // Oversett regelnummer til tilsvarende regelsett-vec. Tar en int og returnerer
 //  en vec.
 CA::vec CA::rulesetIntToVec(int rulesetInt) {
+	
 	bool tmp[8];						// tmp bool array til utregning
 	
 	// gjør rulesetInt om til et binærtall lagret i tmp
@@ -118,7 +119,8 @@ CA::vec CA::rulesetIntToVec(int rulesetInt) {
 //  oversette det binære tallet abc om til en posisjon i regelsettet ved: 
 //  a*4 + b*2 + c. (tvinger verdiene til å være enten 1 eller 0 siden bool
 //  ikke garanterer å være en av disse
-bool CA::rules(const bool a, const bool b, const bool c) {	
+bool CA::rules(const bool a, const bool b, const bool c) {
+	
 	return ruleset[((a != 0) ? 1 : 0)*4 + ((b != 0) ? 1 : 0)*2 +
 			((c != 0) ? 1 : 0)];								
 }
@@ -127,17 +129,20 @@ bool CA::rules(const bool a, const bool b, const bool c) {
 
 // Lager et nytt CA basert på en utgangs-vec og et regelsettnummer.
 CA::CA(const vec initArr, const int rulesetInt) {
+	
 	init(initArr, rulesetInt);
 }
 
 // Lager et nytt CA basert på et utgangs-vec og default regelsettnummer
 CA::CA(const vec initArr) {
+	
 	init(initArr, DEFAULTRULESET);
 }
 
 // Lager et nytt CA basert på en størrelse og et regelsettnummer. Utangs-vec'en
 //  blir en vec med størrelse size fyllt med 0'er med én 1 i midten.
 CA::CA(const int size, const int rulesetInt) {
+	
 	vec initArr(size);				// tom vec fyllt med 0
 	initArr[size/2] = true;			// plasser 1 i midten
 	init(initArr, rulesetInt);
@@ -146,6 +151,7 @@ CA::CA(const int size, const int rulesetInt) {
 // Lager et nytt CA basert på en størrelse og default regelsettnummer. Utgangs-
 //  vec'en blir en vec med størrelse size fyllt med 0'er med én 1 i midten
 CA::CA(const int size) {
+	
 	vec initArr(size);				// tom vec fyllt med 0
 	initArr[size/2] = true;         // plasser 1 i midten
 	init(initArr, DEFAULTRULESET);
@@ -155,6 +161,7 @@ CA::CA(const int size) {
 
 // Printer ut CA med spesifisert bakgrunn og maling (uten linjeskift)
 void CA::print(const char background, const char ink) {
+	
 	for (vec::iterator it = arr.begin(); it != arr.end(); ++it) {
 		std::cout << ((*it != 0) ? ink : background);
 	}	// itererer over cellene i vec og printer bakgrunn hvis 0, 1 hvis ikke
@@ -162,16 +169,19 @@ void CA::print(const char background, const char ink) {
 
 // Printer ut CA med default bakgrunn og maling med linjeskift
 void CA::printf() {
+	
 	printf(DEFAULTINK, DEFAULTBACKGROUND);
 }
 
 // Printer CA med default bakgrunn og maling (uten linjeskift)
 void CA::print() {
+	
 	print(DEFAULTINK, DEFAULTBACKGROUND);
 }
 
 // Printer ut CA med spesifisert bakgrunn og maling med linjeskift
 void CA::printf(const char background, const char ink) {
+	
 	print(background, ink);
 	std::cout << '\n';
 }
@@ -180,6 +190,7 @@ void CA::printf(const char background, const char ink) {
 //  verdi basert på naboene til cellen. (NB! systemet "wrapper": naboene til 
 //  i = 0 er max og 1)
 void CA::step() {
+	
 	vec next(arr.size());	// vec for neste steg
 	for (vec::size_type i = 0; i < arr.size(); ++i) {	// Regner ut neste verdi
 		bool a = (i==0) ? arr[arr.size()-1] : arr[i-1];	// for cellen i basert
@@ -195,6 +206,7 @@ void CA::step() {
 
 // Ta n antall steg. Utility funksjon. Kjører step n ganger.
 void CA::step(const int n) {
+	
 	for (int i = 0; i < n; ++i)
 		step();
 }
