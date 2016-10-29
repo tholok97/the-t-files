@@ -7,15 +7,15 @@
 		automata-system med et et gitt regelsett</p>
 
 <h3>Screen.h</h3>
-&nbsp;&nbsp;&nbsp;&nbsp;<p>Implementerer en slags tegneflate i 
+&nbsp;&nbsp;&nbsp;<p>Implementerer en slags tegneflate i 
 		kommandolinjen</p>
 
 <h3>SvgWriter.h</h3>
-&nbsp;&nbsp;&nbsp;&nbsp;<p>Lar deg tegne tegninger og eksportere dem som 
+&nbsp;&nbsp;<p>Lar deg tegne tegninger og eksportere dem som 
 		svg-filer</p>
 
 <h3>Dijkstra.h</h3>
-&nbsp;&nbsp;&nbsp;&nbsp;<p>Lar deg finne kjappeste sti i et nettverk gitt 
+&nbsp;<p>Lar deg finne kjappeste sti i et nettverk gitt 
 		nabomatrise og (start, slutt)-par</p>
 
 </br></br>
