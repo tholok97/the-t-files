@@ -8,6 +8,24 @@
 	- bruke <algorithm> aktivt
 	- mer kreativt bruk av containers (vektor--);
 	- rydde opp :^)
+ * <eksempelbruk 1>
+ 
+	vector<vector<int>> matrix = {				// nabomatrisa
+				{ 0, 0, 0, 0 },
+				{ 0, 0, 1, 0 },
+				{ 1, 0, 0, 0 },
+				{ 0, 1, 0, 0 }		
+			};
+	
+	Dijkstra d(matrix);							// d er et Dijkstra-objekt
+	
+	vector<int> path = d.doTheThing(0, 3);		// finner sti
+	
+	for (int i : path)							// printer sti
+		cout << i << " ";
+	cout << endl;
+	
+   </eksempelbruk 1>
 */
 
 #ifndef DJIKSTRAHEADER
@@ -70,7 +88,6 @@ Dijkstra::Dijkstra(std::vector<std::vector<int>> vec) {
 //  dersom en slik finnes, en tom sti dersom ingen stier finnes. Stien blir 
 //  returnert som en vektor av inter, hvor hver int representerer en node
 std::vector<int> Dijkstra::doTheThing(int start, int end) {
-	
 	int current = start;	// noden som evalueres. settes til start
 	std::vector<int> dist;		// distanse fra start til [index]
 	std::vector<int> prev;		// den forrigen noden til [index]
@@ -106,7 +123,8 @@ std::vector<int> Dijkstra::doTheThing(int start, int end) {
 		// slett noden fra ubesøkt
 		auto toDelete = std::find(unvisited.cbegin(), unvisited.cend(), 
 				current);
-		unvisited.erase(toDelete);
+		if (toDelete != unvisited.end())
+			unvisited.erase(toDelete);
 		
 		if (!isIn(end, unvisited)) {	// Hvis vi har besøkt slutt: ferdig
 			break;
