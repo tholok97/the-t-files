@@ -9,6 +9,6 @@
 <p>Lar deg tegne tegninger og eksportere dem som svg-filer</p>
 <h3>Dijkstra.h</h3>
 <p>Lar deg finne kjappeste sti i et nettverk gitt nabomatrise og (start, slutt)-par</p>
-</br>
+</br></br>
 <b>NB! Ingen av disse prosjektene er på langt nær ferdige. Ligger kun
 		på github så jeg får testet ut siden :)</b>
