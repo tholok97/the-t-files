@@ -15,7 +15,7 @@ class Dijkstra {
 	typedef std::vector<std::vector<Pair>> adjacencyVec;
 	
 	private:
-		const int INFINITY = 9999;
+		const int INF = 9999;
 		
 		adjacencyVec advec;
 		
@@ -55,7 +55,7 @@ std::vector<int> Dijkstra::doTheThing(int start, int end) {
 	std::vector<int> unvisited;	// ubesøkte noder
 	
 	for (adjacencyVec::size_type i = 0; i < advec.size(); ++i) {
-		dist.push_back(INFINITY);	// sett alle distanser til 'evig'
+		dist.push_back(INF);	// sett alle distanser til 'evig'
 		prev.push_back(-1);			// sett alle parents til -1 (ingenting)
 	}
 	
@@ -98,7 +98,7 @@ std::vector<int> Dijkstra::doTheThing(int start, int end) {
 			}
 		}
 		
-		if (lowest.weight == INFINITY) {
+		if (lowest.weight == INF) {
 			// finnes ingen vei
 			return std::vector<int>();
 		} else {
