@@ -1,10 +1,24 @@
+/*
+ * Dijkstra.h
+ * v1.0
+ * Beskrivelse: Dijkstra.h lar deg regne ut kjappeste rute gitt nabomatrise og 
+	start, slutt. Et Dijkstra objekt lages ved å oppgi en nabomatrise. En kan
+	da regne ut kjappeste rute ved forskjellige (start, slutt) par.
+ * Potensielle forbedringer:
+	- bruke <algorithm> aktivt
+	- mer kreativt bruk av containers (vektor--);
+	- rydde opp :^)
+*/
+
 #ifndef DJIKSTRAHEADER
 #define DJIKSTRAHEADER
 
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <algorithm>
 
+// Struct for å holde (navn, vekt) par. Brukt i kantlista 
 struct Pair {
 	int name;
 	int weight;
@@ -12,21 +26,24 @@ struct Pair {
 
 class Dijkstra {
 	
+	// typedef for kantlistetypen
 	typedef std::vector<std::vector<Pair>> adjacencyVec;
 	
 	private:
-		const int INF = 9999;
+		const int INF = 9999;							// "evig"
 		
-		adjacencyVec advec;
+		adjacencyVec advec;								// kantlista
 		
-		bool isIn(int value, std::vector<int> vec);
+		bool isIn(int value, std::vector<int> vec);		// om value er i vec
 		
 	public:
-		Dijkstra(std::vector<std::vector<int>> vec);
-		std::vector<int> doTheThing(int start, int end);
-		void printAdjacencyList();
+		Dijkstra(std::vector<std::vector<int>> vec);		// constructor
+		std::vector<int> doTheThing(int start, int end);	// finn sti
+		void printAdjacencyList();							// print advec
 };
 
+// Returnerer om value er i vec. Intern
+//  (burde erstattes av <algorithm>
 bool Dijkstra::isIn(int value, std::vector<int> vec) {
 	for (int i : vec) {
 		if (i == value)
@@ -35,18 +52,23 @@ bool Dijkstra::isIn(int value, std::vector<int> vec) {
 	return false;
 }
 
+// Lager et nytt Dijkstra-objekt basert på en nabomatrise gitt som en vektor av
+//  vektorer av int'er
 Dijkstra::Dijkstra(std::vector<std::vector<int>> vec) {
 	
 	// vec må være m x m
-	for (int i = 0; i < vec.size(); ++i) {
-		advec.push_back(std::vector<Pair>());
-		for (int j = 0; j < vec[i].size(); ++j) {
-			if (vec[j][i] != 0)
-				advec[i].push_back(Pair {j, vec[j][i]});
+	for (int i = 0; i < vec.size(); ++i) {					// hvis noden i er 
+		advec.push_back(std::vector<Pair>());				// nabo til j, legg
+		for (int j = 0; j < vec[i].size(); ++j) {			// til (navn, vekt)
+			if (vec[j][i] != 0)								// par i advec[i]
+				advec[i].push_back(Pair {j, vec[j][i]});	
 		}
 	}
 }
 
+// Utfører Dijkstras algoritme på advec med (start, end). Returnerer stien
+//  dersom en slik finnes, en tom sti dersom ingen stier finnes. Stien blir 
+//  returnert som en vektor av inter, hvor hver int representerer en node
 std::vector<int> Dijkstra::doTheThing(int start, int end) {
 	
 	int current = start;	// noden som evalueres. settes til start
@@ -62,34 +84,35 @@ std::vector<int> Dijkstra::doTheThing(int start, int end) {
 	dist[start] = 0; 		// distansen til start fra start er 0 (duh)
 	
 	for (adjacencyVec::size_type i = 0; i < advec.size(); ++i) {
-		if (i != start)
+		if (i != start)		// alle noder unntatt start regnes som ubesøkt
 			unvisited.push_back(i);
 	}
 	
+	// utfør loopen på én node av gangen. starter med start
 	while (true) {
-		for (int i = 0; i < advec[current].size(); ++i) {
+		
+		// se på de ubesøkte naboene, og regn ut distanse fra noden til naboen.
+		// hvis denne er mindre enn distansen som er lagret, oppdater
+		for (int i = 0; i < advec[current].size(); ++i) {	
 			if (isIn(advec[current][i].name, unvisited)) {
 				int tentDist = advec[current][i].weight + dist[current];
 				if (tentDist < dist[advec[current][i].name]) {
-					dist[advec[current][i].name] = tentDist;
-					prev[advec[current][i].name] = current;
+					dist[advec[current][i].name] = tentDist;	// oppdater dist
+					prev[advec[current][i].name] = current;	// oppdater parent
 				}
 			}
 		}
 		
-		int pos;
-		for (pos = 0; pos < unvisited.size(); ++pos) {
-			if (current == unvisited[pos])
-				break;
-		}
-		if (pos < unvisited.size()) {
-			unvisited.erase(unvisited.begin()+pos);
-		}
+		// slett noden fra ubesøkt
+		auto toDelete = std::find(unvisited.cbegin(), unvisited.cend(), 
+				current);
+		unvisited.erase(toDelete);
 		
-		if (!isIn(end, unvisited)) {
+		if (!isIn(end, unvisited)) {	// Hvis vi har besøkt slutt: ferdig
 			break;
 		}
 		
+		// Finner den ubesøkte noden med lavest dist
 		Pair lowest = {unvisited[0], dist[unvisited[0]]};
 		for (std::vector<int>::size_type i = 0; i < unvisited.size(); ++i) {
 			if (dist[unvisited[i]] < lowest.weight) {
@@ -98,31 +121,33 @@ std::vector<int> Dijkstra::doTheThing(int start, int end) {
 			}
 		}
 		
-		if (lowest.weight == INF) {
-			// finnes ingen vei
+		if (lowest.weight == INF) {		// Finnes ingen vei... gi opp
 			return std::vector<int>();
-		} else {
+		} else {						// sett current til noden med minst dist
 			current = lowest.name;
 		}
 	}
 	
-	std::vector<int> path;
-	std::vector<int> rpath;
+	std::vector<int> rpath;		// stien (baklengs)
+	std::vector<int> path;		// stien
 	
+	// regner ut stien (baklengs) utifa prev[] inn i rpath
 	int i = end;
 	while (i != start) {
-		path.push_back(i);
+		rpath.push_back(i);
 		i = prev[i];
 	}
-	path.push_back(start);
+	rpath.push_back(start);
 	
-	for (auto it = path.rbegin(); it != path.rend(); ++it) {
-		rpath.push_back(*it);
+	// reverserer stien og lagrer i path
+	for (auto it = rpath.rbegin(); it != rpath.rend(); ++it) {
+		path.push_back(*it);
 	}
 	
-	return rpath;
+	return path;	// returner stien
 }
 
+// Printer advec
 void Dijkstra::printAdjacencyList() {
 	
 	std::cout << "Printing adjacency list: \n";
