@@ -1,5 +1,5 @@
 <h1>Uberkule prosjekt jeg jobber på havner her</h1>
-
+</br>
 <h3>CA.h</h3>
 <p>Lar deg kjøre simuleringer av et elementært cellular automata-system med et
 		et gitt regelsett</p>
@@ -9,5 +9,6 @@
 <p>Lar deg tegne tegninger og eksportere dem som svg-filer</p>
 <h3>Dijkstra.h</h3>
 <p>Lar deg finne kjappeste sti i et nettverk gitt nabomatrise og (start, slutt)-par</p>
+</br>
 <b>NB! Ingen av disse prosjektene er på langt nær ferdige. Ligger kun
 		på github så jeg får testet ut siden :)</b>
