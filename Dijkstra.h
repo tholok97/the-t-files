@@ -7,6 +7,8 @@
  * Potensielle forbedringer:
 	- bruke <algorithm> aktivt
 	- mer kreativt bruk av containers (vektor--);
+	- skriv om doTheThing til å jobbe direkte på nabomatrisa? (kutte ut advec)
+	- skriv om til å la brukeren definere når to noder er naboer (tilate grid)
 	- rydde opp :^)
  * <eksempelbruk 1>
  
@@ -110,7 +112,7 @@ std::vector<int> Dijkstra::doTheThing(int start, int end) {
 		
 		// se på de ubesøkte naboene, og regn ut distanse fra noden til naboen.
 		// hvis denne er mindre enn distansen som er lagret, oppdater
-		for (int i = 0; i < advec[current].size(); ++i) {	
+		for (int i = 0; i < advec[current].size(); ++i) {
 			if (isIn(advec[current][i].name, unvisited)) {
 				int tentDist = advec[current][i].weight + dist[current];
 				if (tentDist < dist[advec[current][i].name]) {
