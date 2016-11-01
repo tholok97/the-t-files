@@ -23,5 +23,6 @@
 <b>NB! Koden min er skrevet med tabspace satt til 4. Av en eller annen grunn
 		vises Github-kode med 8. Dette gjør desverre at mange av kommentarene
 		ser helt malplasserte ut...</b>
+</br>
 <b>NB! Ingen av disse prosjektene er på langt nær ferdige. Ligger kun
 		på github så jeg får testet ut siden :)</b>
