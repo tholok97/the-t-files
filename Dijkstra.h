@@ -98,7 +98,6 @@ Dijkstra::Dijkstra(std::vector<std::vector<bool>> grid) {
 		return;
 	else if (grid[0].empty())
 		return;
-			
 													
 	std::vector<std::string> nodes;		// nodenavn				
 													
