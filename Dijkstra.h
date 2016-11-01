@@ -1,6 +1,6 @@
 /*
  * Dijkstra.h
- * v2.0
+ * v2.0 
  * Beskrivelse: Dijkstra.h lar deg regne ut kjappeste rute gjennom en graf. Et 
 	Dijkstra objekt lages ved å oppgi enten en liste med nodenavn og en 
 	nabo(node1, node2)-funksjon for å avgjøre hvilke nodepar som er naboer, 
