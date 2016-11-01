@@ -7,13 +7,17 @@
 	eller en grid av bool-verdier, hvor sann er lovlig terreng og usann er 
 	ulovlig terreng (kan brukes til å lage graf direkte fra "kart"). Etter 
 	grafen er laget kan en regne ut kjappeste rute ved Dijkstras algoritme for 
-	flere (start, slutt)-par.
+	flere (start, slutt)-par. 
+* NB! Om objektet lages fra grid vil hver node få navn utifra posisjonen sin i 
+	grid. Foreks. vil objekt ved posisjon (2, 13) i et 102 x 53 grid få navn 
+	"002013" (string-navn er en midlertidig løsning til  jeg lærer meg 
+	template'ering
  * Potensielle forbedringer:
 	- bruke <algorithm> "enda" mer aktivt
 	- unvisited burde være et set
+	- nodes burde være set (??)
 	- nodenavntypen burde kunne velges (template) (eks: 
 		Dijkstra<pair<int,int>> (...) <- nodenavn er par av int'er (x,y))
-	- grid støtter hittil bare størrelser på maks 10 x 10........... fiks
 	- rydde opp :^)
  * <eksempelbruk 1>
  
@@ -47,9 +51,6 @@
 #include <utility>
 #include <map>
 #include <string>
-
-
-#include <iostream>
 
 class Dijkstra {
 	
@@ -92,25 +93,46 @@ Dijkstra::Dijkstra(std::vector<std::string> nodes,
 //  tolket som mangel på node (vegg)
 // NB! noder får automatisk navn basert på posisjon i grid
 Dijkstra::Dijkstra(std::vector<std::vector<bool>> grid) {
-														
+													
+	if (grid.empty())
+		return;
+	else if (grid[0].empty())
+		return;
+			
+													
 	std::vector<std::string> nodes;		// nodenavn				
-														
+													
+	// regner ut hvor mange siffer hver r og c trenger
+	int max_size = (grid.size()>grid[0].size()) ? grid.size() : grid[0].size();
+	int digits = std::to_string(max_size-1).size();
+													
 	// noder får navn etter koordinatene sine i grid
 	for (std::vector<std::vector<bool>>::size_type i = 0; 
 			i < grid.size(); ++i) {
 		for (std::vector<bool>::size_type j = 0; j < grid[i].size(); ++j) {
-			if (grid[i][j])
-				nodes.push_back(std::to_string(i) + std::to_string(j));
+			if (grid[i][j]) {
+				std::string r = std::to_string(i);
+				std::string c = std::to_string(j);
+				for (;r.size() < digits; r = "0" + r);	// legger til 0 for å
+				for (;c.size() < digits; c = "0" + c);	// matche antall siffer
+				
+				nodes.push_back(r + c); 	// navnet blir r + c ("001" + "203")
+			}
 		}
 	}
-	
+
 	// nabofunsksjon som baserer seg på navngivingen til nodene til å finne ut
 	//  om to noder er naboer. To noder er naboer hvis (abs(r1 - r2) + 
 	//  abs(c1 + c2)) er mellom 0 og 2
 	auto neighboor = [](std::string a, std::string b) -> int {
 					// henter ut koordinatene til nodene (som stringer)
-					std::string ays = a.substr(0,1), axs = a.substr(1,1);
-					std::string bys = b.substr(0,1), bxs = b.substr(1,1);
+					// posisjonen til koordinatene i navnet er gitt som:
+					//	r: 0 -> halveis
+					//	c: halveis -> slutt
+					std::string ays = a.substr(0,a.size()/2);
+					std::string axs = a.substr(a.size()/2,a.size()/2);
+					std::string bys = b.substr(0,b.size()/2);
+					std::string bxs = b.substr(b.size()/2,b.size()/2);
 					
 					// oversetter til tallverdier
 					int ay = std::stoi(ays), ax = std::stoi(axs);
