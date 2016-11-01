@@ -15,8 +15,7 @@
 		svg-filer</p>
 
 <h3>Dijkstra.h</h3>
-<p>Lar deg finne kjappeste sti i et nettverk gitt 
-		nabomatrise og (start, slutt)-par</p>
+<p>Lar deg finne kjappeste sti i et nettverk</p>
 
 </br></br>
 
