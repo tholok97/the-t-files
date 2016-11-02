@@ -41,6 +41,23 @@
 		cout << step << " ";
 	
    </eksempelbruk 1>
+ * <eksempelbruk 2>
+ 
+	vector<string> nodes = {"A", "B", "C", "D"};	// nodeliste
+	vector<vector<int>> admatrix = {	{0,0,0,0},	// nabomatrise
+										{0,0,1,0},
+										{1,0,0,0},
+										{4,1,0,0}};
+	
+	Dijkstra d(nodes, admatrix);	// Dijkstra-objekt
+	
+	vector<string> path = d.findPath("A", "D");	// finn sti fra A til D
+	
+	for (string step : path)	// print sti
+		cout << step << endl;
+	
+ 
+   </eksempelbruk 2>
 */
 
 #ifndef DIJKSTRAHEADER
@@ -52,8 +69,6 @@
 #include <map>
 #include <string>
 #include <set>
-
-#include <iostream>
 
 class Dijkstra {
 	
