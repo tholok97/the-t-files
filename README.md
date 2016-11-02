@@ -15,10 +15,13 @@
 		svg-filer</p>
 
 <h3>Dijkstra.h</h3>
-<p>Lar deg finne kjappeste sti i et nettverk gitt 
-		nabomatrise og (start, slutt)-par</p>
+<p>Lar deg finne kjappeste sti i et nettverk</p>
 
 </br></br>
 
-<b>NB! Ingen av disse prosjektene er på langt nær ferdige. Ligger kun
+<b>NB! Koden min er skrevet med tabspace satt til 4. Av en eller annen grunn
+		vises Github-kode med 8. Dette gjør dessverre at mange av kommentarene
+		ser helt malplasserte ut...</b>
+</br></br>
+<b>NB2! Ingen av disse prosjektene er på langt nær ferdige. Ligger kun
 		på github så jeg får testet ut siden :)</b>
