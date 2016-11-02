@@ -3,11 +3,11 @@
  * v3.0
  * Beskrivelse: Dijkstra.h lar deg regne ut kjappeste rute gjennom en graf. Et 
 	Dijkstra objekt lages ved å oppgi enten en liste med nodenavn og en 
-	nabo(node1, node2)-funksjon for å avgjøre hvilke nodepar som er naboer, 
-	eller en grid av bool-verdier, hvor sann er lovlig terreng og usann er 
-	ulovlig terreng (kan brukes til å lage graf direkte fra "kart"). Etter 
-	grafen er laget kan en regne ut kjappeste rute ved Dijkstras algoritme for 
-	flere (start, slutt)-par. 
+	nabo(node1, node2)-funksjon for å avgjøre hvilke nodepar som er naboer,
+	en liste med nodenavn og en nabomatrise	eller en grid av bool-verdier, hvor 
+	sann er lovlig terreng og usann er ulovlig terreng (kan brukes til å lage 
+	graf direkte fra "kart"). Etter grafen er laget kan en regne ut kjappeste 
+	rute ved Dijkstras algoritme for flere (start, slutt)-par. 
 * NB! Om objektet lages fra grid vil hver node få navn utifra posisjonen sin i 
 	grid. Foreks. vil objekt ved posisjon (2, 13) i et 102 x 53 grid få navn 
 	"002013" (string-navn er en midlertidig løsning til  jeg lærer meg 
@@ -71,6 +71,8 @@ class Dijkstra {
 		// constructorer
 		Dijkstra(std::vector<std::string> nodes,	// nodeliste + nabofunksjon 
 				int (*neighboor)(std::string a, std::string b));
+		Dijkstra(std::vector<std::string> nodes, 	// nodeliste + nabomatrise
+				std::vector<std::vector<int>> adjacencyMatrix);
 		Dijkstra(std::vector<std::vector<bool>> grid);	// grid (navn blir r,c)
 		
 		// funksjoner
@@ -87,6 +89,22 @@ Dijkstra::Dijkstra(std::vector<std::string> nodes,
 		int (*neighboor)(std::string a, std::string b)) {
 	
 	init(nodes, neighboor);
+}
+
+// Lageer et nytt objekt basert på en liste med nodenavn og en nabomatrise. 
+//	Matrisen MÅ være (antall nodenavn) x (antall nodenavn)!!!!!
+Dijkstra::Dijkstra(std::vector<std::string> nodes, 
+		std::vector<std::vector<int>> adjacencyMatrix) {
+	
+	this->nodes = nodes;	// lagrer nodenavnene i this->nodes
+	
+	// Går igjennom nabomatrisa lager advec basert på den
+	for (std::vector<std::vector<int>>::size_type i = 0; i < adjacencyMatrix.size(); ++i) {
+		for (std::vector<int>::size_type j = 0; j < adjacencyMatrix[i].size(); ++j) {
+			if (adjacencyMatrix[i][j])
+				advec[nodes[j]].push_back(std::pair<std::string, int>(nodes[i], adjacencyMatrix[i][j]));
+		}
+	}
 }
 
 // Lager et nytt objekt basert på en grid av sann / usann -verdier. Finner på
