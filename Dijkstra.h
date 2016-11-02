@@ -1,6 +1,6 @@
 /*
  * Dijkstra.h
- * v2.0
+ * v3.0
  * Beskrivelse: Dijkstra.h lar deg regne ut kjappeste rute gjennom en graf. Et 
 	Dijkstra objekt lages ved å oppgi enten en liste med nodenavn og en 
 	nabo(node1, node2)-funksjon for å avgjøre hvilke nodepar som er naboer, 
@@ -14,7 +14,7 @@
 	template'ering
  * Potensielle forbedringer:
 	- bruke <algorithm> "enda" mer aktivt
-	- unvisited burde være et set
+	- unvisited burde være priority queue?
 	- nodes burde være set (??)
 	- nodenavntypen burde kunne velges (template) (eks: 
 		Dijkstra<pair<int,int>> (...) <- nodenavn er par av int'er (x,y))
@@ -51,6 +51,9 @@
 #include <utility>
 #include <map>
 #include <string>
+#include <set>
+
+#include <iostream>
 
 class Dijkstra {
 	
@@ -177,17 +180,17 @@ void Dijkstra::init(std::vector<std::string> nodes, 		// funker bare for
 //  finnes.
 std::vector<std::string> Dijkstra::findPath(std::string start, 
 		std::string end) {
-	
+			
 	std::string current;	// noden som evalueres.
 	std::map<std::string, int> dist;			// distanse fra start til [node]	
 	std::map<std::string, std::string> prev;	// parent til [node]
-	std::vector<std::string> unvisited;			// ubesøkte noder
+	std::set<std::string> unvisited;			// set av ubesøkte noder
 	
 	for (std::string n : nodes) {		// Sett dist til alle noder til INF,
 		dist[n] = INF;					// prev til alle noder til "" og
 		prev[n] = "";					// legg alle noder unntatt start til
 		if (n != start)					// unvisited
-			unvisited.push_back(n);
+			unvisited.insert(n);
 	}
 	
 	dist[start] = 0;	// distansen fra start til seg selv er 0;
@@ -201,8 +204,7 @@ std::vector<std::string> Dijkstra::findPath(std::string start,
 		// Se på de ubesøkte nodene til current, foreslå ny dist via current,
 		// hvis denne er mindre enn dist som er lagret, oppdater
 		for (std::pair<std::string, int> neighboor : advec[current]) {
-			if (find(unvisited.begin(), unvisited.end(), neighboor.first) 
-						!= unvisited.end()) {	// tentDist = dist via current
+			if (unvisited.find(neighboor.first) != unvisited.end()) {
 				int tentDist = dist[current] + neighboor.second;
 				if (tentDist < dist[neighboor.first]) {	// Hvis ny er mindre:
 					dist[neighboor.first] = tentDist;		// oppdater dist
@@ -211,17 +213,18 @@ std::vector<std::string> Dijkstra::findPath(std::string start,
 			}
 		}
 		
-		// Slett current fra unvisited (hvis den er der)
-		auto toDelete = find(unvisited.begin(), unvisited.end(), current);
-		if (toDelete != unvisited.end())	// bare prøv å slette hvis den
-			unvisited.erase(toDelete);		// er i unvisited
+		// har "besøkt" current. fjern fra ubesøkt
+		unvisited.erase(current);
 		
 		// hvis vi har besøkt unvisited: FERDIG
-		if (find(unvisited.begin(), unvisited.end(), end) == unvisited.end())
+		if (unvisited.find(end) == unvisited.end())	
 			break;
 		
 		// Finn den ubesøkte noden med lavest dist
-		std::pair<std::string, int> lowest(unvisited[0], dist[unvisited[0]]);
+		std::pair<std::string, int> lowest(*(unvisited.begin()), 
+				dist[*(unvisited.begin())]);
+				
+		
 		for (std::string n : unvisited) {
 			if (dist[n] < lowest.second) {
 				lowest = std::pair<std::string, int>(n, dist[n]);
