@@ -1,6 +1,6 @@
 /*
  * Dijkstra.h
- * v3.0
+ * v4.0
  * Beskrivelse: Dijkstra.h lar deg regne ut kjappeste rute gjennom en graf. Et 
 	Dijkstra objekt lages ved å oppgi enten en liste med nodenavn og en 
 	nabo(node1, node2)-funksjon for å avgjøre hvilke nodepar som er naboer,
@@ -77,6 +77,7 @@ class Dijkstra {
 		std::map<std::string, std::vector<std::pair<std::string, int>>> advec;
 		std::vector<std::string> nodes;	// navnene til nodene
 		const int INF = 999999;			// "evig"
+		bool broken = false;	// flagg som blir true hvis constructor feiler
 		
 		// init basert på noder og nabofunskjon
 		void init(std::vector<std::string> nodes, 
@@ -102,6 +103,12 @@ class Dijkstra {
 //  basert på denne informasjonen. Bruker init
 Dijkstra::Dijkstra(std::vector<std::string> nodes, 
 		int (*neighboor)(std::string a, std::string b)) {
+
+	// om nodelista er tom gir vi opp..
+	if (nodes.empty()) {
+		broken = true;
+		return;
+	}
 	
 	init(nodes, neighboor);
 }
@@ -110,14 +117,33 @@ Dijkstra::Dijkstra(std::vector<std::string> nodes,
 //	Matrisen MÅ være (antall nodenavn) x (antall nodenavn)!!!!!
 Dijkstra::Dijkstra(std::vector<std::string> nodes, 
 		std::vector<std::vector<int>> adjacencyMatrix) {
-	
+
+	// Sjekk om infoen er gyldig. Hvis ikke: gi opp..
+	if (nodes.empty()) {
+		broken = true;
+		return;
+	} else if (adjacencyMatrix.empty()) {
+		broken = true;
+		return;
+	} else if (adjacencyMatrix[0].empty()) {
+		broken = true;
+		return;
+	} else if (nodes.size() != adjacencyMatrix.size() || 
+			nodes.size() != adjacencyMatrix[0].size()) {
+		broken = true;
+		return;
+	}
+
 	this->nodes = nodes;	// lagrer nodenavnene i this->nodes
 	
 	// Går igjennom nabomatrisa lager advec basert på den
-	for (std::vector<std::vector<int>>::size_type i = 0; i < adjacencyMatrix.size(); ++i) {
-		for (std::vector<int>::size_type j = 0; j < adjacencyMatrix[i].size(); ++j) {
+	for (std::vector<std::vector<int>>::size_type i = 0; 
+			i < adjacencyMatrix.size(); ++i) {
+		for (std::vector<int>::size_type j = 0; j < adjacencyMatrix[i].size();
+				++j) {
 			if (adjacencyMatrix[i][j])
-				advec[nodes[j]].push_back(std::pair<std::string, int>(nodes[i], adjacencyMatrix[i][j]));
+				advec[nodes[j]].push_back(std::pair<std::string, int>(nodes[i], 
+						adjacencyMatrix[i][j]));
 		}
 	}
 }
@@ -130,10 +156,14 @@ Dijkstra::Dijkstra(std::vector<std::string> nodes,
 // NB! noder får automatisk navn basert på posisjon i grid
 Dijkstra::Dijkstra(std::vector<std::vector<bool>> grid) {
 													
-	if (grid.empty())
+	// om grid er tom, gi opp
+	if (grid.empty()) {
+		broken = true;
 		return;
-	else if (grid[0].empty())
+	} else if (grid[0].empty()) {
+		broken = true;
 		return;
+	}
 													
 	std::vector<std::string> nodes;		// nodenavn				
 													
@@ -213,7 +243,17 @@ void Dijkstra::init(std::vector<std::string> nodes, 		// funker bare for
 //  finnes.
 std::vector<std::string> Dijkstra::findPath(std::string start, 
 		std::string end) {
-			
+
+	// Om broken, gi opp..
+	if (broken)
+		return std::vector<std::string>();
+	
+	// Om start eller slutt ikke finnes i nodelista, returner en tom sti (feil)
+	if (find(nodes.begin(), nodes.end(), start) == nodes.end() ||
+			find(nodes.begin(), nodes.end(), end) == nodes.end()) {
+		return std::vector<std::string>();	
+	}
+		
 	std::string current;	// noden som evalueres.
 	std::map<std::string, int> dist;			// distanse fra start til [node]	
 	std::map<std::string, std::string> prev;	// parent til [node]

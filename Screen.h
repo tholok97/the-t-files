@@ -25,7 +25,7 @@
 #include <string>
 #include <cmath>
 
-const float PI = 3.14;	// Tilnermingsverdi for pi
+const float PI = 3.14;	// Tilnærmingsverdi for pi
 
 class Screen {
 	
@@ -50,14 +50,14 @@ class Screen {
 		Screen(const int width, const int height);
 		
 		// Gettere og settere:
-		int getWidth() {return width;}
-		int getHeight() {return height;}
+		int getWidth() { return width; }
+		int getHeight() { return height; }
 		void setInk(const char ink) {this->ink = ink;}
 		void setBackgroundchar(const char backgroundChar) {
 			this->backgroundChar = backgroundChar;
 		}
-		char getInk() {return ink;}
-		char getBackgroundChar() {return backgroundChar;}
+		char getInk() { return ink; }
+		char getBackgroundChar() { return backgroundChar; }
 		
 		// Div. funksjoner
 		bool dot(const int x, const int y);				// Tegner dot ved (x,y)
