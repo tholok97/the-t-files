@@ -19,6 +19,8 @@
 	- nodenavntypen burde kunne velges (template) (eks: 
 		Dijkstra<pair<int,int>> (...) <- nodenavn er par av int'er (x,y))
 	- rydde opp :^)
+	- OBS! koden burde bruke utility-funksjoene som konverterer fra name til
+		(r,c) og omvendt.
  * <eksempelbruk 1>
  
 	vector<vector<bool>> grid = {	{1,1,1,0,1,1,1,1},		// "kartet"
@@ -94,6 +96,8 @@ class Dijkstra {
 		// funksjoner
 		std::vector<std::string> findPath(std::string start,	// finner sti
 				std::string end);								// ved dijkstra
+		std::string rcToNodeName(int r, int c, int digits); 	// (r,c) -> name
+		std::pair<int, int> nodeNameToRCPair(std::string name);	// name -> (r,c)
 };
 
 //---------------------------------CONSTRUCTORS---------------------------------
@@ -324,6 +328,34 @@ std::vector<std::string> Dijkstra::findPath(std::string start,
 		
 		
 	return rpath; // returner sti
+}
+
+// Tar et (r,c) par og returnerer et nodenavn med minimumslengde 2 * digits
+// Midlertidig løsning mens jeg lærer meg kunsten å skrive template-typer
+std::string Dijkstra::rcToNodeName(int r, int c, int digits) {
+	
+	std::string rs = std::to_string(r);		// Oversetter til string
+	std::string cs = std::to_string(c);
+
+	for (;rs.size() < digits; rs = "0" + rs); 		// legger til 0 slik at  
+	for (;cs.size() < digits; cs = "0" + cs);		// lengden blir digits
+
+	return rs + cs; 	// returnerer den samlede stringen rs + cs
+}
+
+// Tar et nodenavn på formen "rc" og returnerer r og c som et par av inter
+// NB! bruk bare på navn på formen "rc". Midltertidig løsning mens jeg lærer meg
+// kunsten å skrive template-typer
+std::pair<int, int> Dijkstra::nodeNameToRCPair(std::string name) {
+
+	// henter ut r, c informasjonen fra name
+	std::string rs = name.substr(0,name.size()/2);
+	std::string cs = name.substr(name.size()/2, name.size()/2);
+
+	int r = stoi(rs); 	// oversetter til int
+	int c = stoi(cs);
+
+	return std::pair<int, int>(r, c);	// returnerer et par med (r, c)
 }
 
 #endif
