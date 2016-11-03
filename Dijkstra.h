@@ -113,7 +113,7 @@ Dijkstra::Dijkstra(std::vector<std::string> nodes,
 	init(nodes, neighboor);
 }
 
-// Lageer et nytt objekt basert på en liste med nodenavn og en nabomatrise. 
+// Lager et nytt objekt basert på en liste med nodenavn og en nabomatrise. 
 //	Matrisen MÅ være (antall nodenavn) x (antall nodenavn)!!!!!
 Dijkstra::Dijkstra(std::vector<std::string> nodes, 
 		std::vector<std::vector<int>> adjacencyMatrix) {
