@@ -101,6 +101,7 @@ class Dijkstra {
 				std::string end, std::set<std::string> &visited);
 };
 
+// Globale funksjoner:
 std::string rcToNodeName(int r, int c, int digits); 	// (r,c) -> name
 std::pair<int, int> nodeNameToRCPair(std::string name);	// name -> (r,c)
 
