@@ -10,6 +10,10 @@
 	- Regel: 		30
 	- Bakgrunn: 	'0'
 	- Ink: 			'1'
+ * LEGGE TIL: 
+	-> Overloadede operatore for <<, = {...} og [n]
+	-> Overloade + n, ++ :D :D :D :D :D :D	
+	-> OUTPUT MÅ LAGES PÅ NYTT..... (til å fungere rundt << )
  * <eksempelbruk1>
  
 	CA ca(200);			// Nytt CA med vidde 200. Default regler brukes (30)
@@ -40,6 +44,7 @@
 #include <cmath>
 
 class CA {
+	friend std::ostream& operator<<(std::ostream&, CA&);
 	
 	private:
 		// Standardverdi i tilfelle disse ikke blir spesifisert
@@ -170,13 +175,13 @@ void CA::print(const char background, const char ink) {
 // Printer ut CA med default bakgrunn og maling med linjeskift
 void CA::printf() {
 	
-	printf(DEFAULTINK, DEFAULTBACKGROUND);
+	printf(DEFAULTBACKGROUND, DEFAULTINK);
 }
 
 // Printer CA med default bakgrunn og maling (uten linjeskift)
 void CA::print() {
 	
-	print(DEFAULTINK, DEFAULTBACKGROUND);
+	print(DEFAULTBACKGROUND, DEFAULTINK);
 }
 
 // Printer ut CA med spesifisert bakgrunn og maling med linjeskift
@@ -209,6 +214,16 @@ void CA::step(const int n) {
 	
 	for (int i = 0; i < n; ++i)
 		step();
+}
+
+//--------------------------OVERLOADEDE OPERATORER------------------------------
+
+std::ostream& operator<<(std::ostream &os, CA &ca) {
+	
+	for (CA::vec::iterator it = ca.arr.begin(); it != ca.arr.end(); ++it) {
+		std::cout << ((*it != 0) ? ca.DEFAULTINK : ca.DEFAULTBACKGROUND);
+	}	// itererer over cellene i vec og printer bakgrunn hvis 0, 1 hvis ikke
+	return os;
 }
 
 #endif
