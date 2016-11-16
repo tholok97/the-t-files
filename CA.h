@@ -3,9 +3,9 @@
  * v1.0
  * Beskrivelse: CA er en implementasjon av et elementært cellular automata 
 	system. Kan bruke CA til å simulere steg av et gitt system. CA inneholder 
-	funksjoner for å printe generasjonene med cout, men det er også mulig å ta 
-	systemet direkte å lage egen output. Et system er i denne klassen beskrevet 
-	som en vektor av booler, typdef'et til vec.
+	funksjoner for å printe generasjonene med cout, men det er også mulig å
+	ta systemet direkte å lage egen output. Et system er i denne klassen 
+	beskrevet som en vektor av booler, typdef'et til vec.
  * Der input er valgfritt brukes disse defaultverdiene:
 	- Regel: 		30
 	- Bakgrunn: 	'0'
@@ -13,7 +13,7 @@
  * LEGGE TIL: 
 	-> Overloadede operatore for <<, = {...} og [n]
 	-> Overloade + n, ++ :D :D :D :D :D :D	
-	-> OUTPUT M� LAGES P� NYTT..... (til � fungere rundt << )
+	-> setter for ruleset
  * <eksempelbruk1>
  
 	CA ca(200);			// Nytt CA med vidde 200. Default regler brukes (30)
@@ -44,7 +44,8 @@
 #include <cmath>
 
 class CA {
-	friend std::ostream& operator<<(std::ostream&, CA&);
+	// Overloader << s� en kan skrive ut et CA via denne
+	friend std::ostream& operator<<(std::ostream&, const CA&);
 	
 	private:
 		// Standardverdi i tilfelle disse ikke blir spesifisert
@@ -58,6 +59,7 @@ class CA {
 		vec arr; 		// den nåværende tilstanden til systemet
 		vec ruleset;	// regelsettet å bruke på systemet for hvert steg
 		int gen;		// hvilken "generasjon" systemet er i
+		char ink, background;	// maling
 		
 		
 		// Interne utility funksjoner:
@@ -74,17 +76,27 @@ class CA {
 		CA(const int size);					
 		
 		// Gettere og settere:
-		vec getArr() {return arr;}			
-		vec getRuleset() {return ruleset;}	
-		int getGen() {return gen;}
+		vec getArr() { return arr; }			
+		vec getRuleset() { return ruleset; }	
+		int getGen() { return gen; }
+		char getInk() { return ink; }
+		char getBackground() { return background; }
+		void setInk(char c) { ink = c; }
+		void setBackground(char c) { background = c; }
 		
 		// Div. funksjoner:
-		void print(const char background, const char ink);	// print med maling
-		void printf(const char background, const char ink);	// -||- pluss \n
-		void print();							// print med default maling
-		void printf();							// -||- pluss \n
+		void print(std::ostream &os, const char background, 
+				const char ink) const; // print p� os med maling
+		void printf(std::ostream &os, const char background, 
+				const char ink) const;	// -||- pluss \n
+		void print(std::ostream &os) const;		// print med default maling
+		void printf(std::ostream &os) const;	// -||- pluss \n
 		void step();							// ta ett steg
 		void step(const int n);					// ta n steg
+
+		// Overloadede increment operatorer (prefix/postfix)
+		CA& operator++();		// Ta et steg og returner CA'et
+		CA operator++(int);		// Ta et steg og returner forrige steg i CA'et
 };
 
 //--------------------------INTERNE UTILITY FUNKSJONER--------------------------
@@ -95,6 +107,8 @@ void CA::init(const vec initArr, const int rulesetInt) {
 	
 	arr = initArr;
 	ruleset = rulesetIntToVec(rulesetInt);
+	ink = DEFAULTINK;
+	background = DEFAULTBACKGROUND;
 	gen = 0;
 }
 
@@ -144,8 +158,9 @@ CA::CA(const vec initArr) {
 	init(initArr, DEFAULTRULESET);
 }
 
-// Lager et nytt CA basert på en størrelse og et regelsettnummer. Utangs-vec'en
-//  blir en vec med størrelse size fyllt med 0'er med én 1 i midten.
+// Lager et nytt CA basert på en størrelse og et regelsettnummer. 
+//	Utangs-vec'en blir en vec med størrelse size fyllt med 0'er med én 1 i 
+//	midten.
 CA::CA(const int size, const int rulesetInt) {
 	
 	vec initArr(size);				// tom vec fyllt med 0
@@ -165,29 +180,29 @@ CA::CA(const int size) {
 //---------------------------DIV. FUNKSJONER------------------------------------
 
 // Printer ut CA med spesifisert bakgrunn og maling (uten linjeskift)
-void CA::print(const char background, const char ink) {
+void CA::print(std::ostream &os, const char background, const char ink) const {
 	
-	for (vec::iterator it = arr.begin(); it != arr.end(); ++it) {
-		std::cout << ((*it != 0) ? ink : background);
+	for (vec::const_iterator it = arr.cbegin(); it != arr.cend(); ++it) {
+		os << ((*it != 0) ? ink : background);
 	}	// itererer over cellene i vec og printer bakgrunn hvis 0, 1 hvis ikke
 }
 
 // Printer ut CA med default bakgrunn og maling med linjeskift
-void CA::printf() {
+void CA::printf(std::ostream &os) const {
 	
-	printf(DEFAULTBACKGROUND, DEFAULTINK);
+	printf(os, background, ink);
 }
 
 // Printer CA med default bakgrunn og maling (uten linjeskift)
-void CA::print() {
+void CA::print(std::ostream &os) const {
 	
-	print(DEFAULTBACKGROUND, DEFAULTINK);
+	print(os, background, ink);
 }
 
 // Printer ut CA med spesifisert bakgrunn og maling med linjeskift
-void CA::printf(const char background, const char ink) {
+void CA::printf(std::ostream &os, const char background, const char ink) const {
 	
-	print(background, ink);
+	print(os, background, ink);
 	std::cout << '\n';
 }
 
@@ -216,13 +231,28 @@ void CA::step(const int n) {
 		step();
 }
 
-//--------------------------OVERLOADEDE OPERATORER------------------------------
+// Overloader prefix ++ operator s� vi kan ta ett steg med denne. Returnerer
+//	referanse til CA etter steget
+CA& CA::operator++() {
+	step();
+	return *this;
+}
 
-std::ostream& operator<<(std::ostream &os, CA &ca) {
+// Overloader postfix ++ operator s� vi kan ta ett steg med denne. Returnerer
+//	CA f�r stegeet (som et nytt CA-objekt)
+CA CA::operator++(int) {
+	CA ret = *this;
+	++*this;
+	return ret;
+}
+
+//--------------------------GLOBALE FUNKSJONER----------------------------------
+
+// Overloader << operatoren s� vi kan skrive ut CA med denne, returnerer os
+std::ostream& operator<<(std::ostream &os, const CA &ca) {
 	
-	for (CA::vec::iterator it = ca.arr.begin(); it != ca.arr.end(); ++it) {
-		std::cout << ((*it != 0) ? ca.DEFAULTINK : ca.DEFAULTBACKGROUND);
-	}	// itererer over cellene i vec og printer bakgrunn hvis 0, 1 hvis ikke
+	ca.print(os);
+
 	return os;
 }
 
