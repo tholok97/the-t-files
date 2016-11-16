@@ -26,4 +26,4 @@
 <b>NB2! Ingen av disse prosjektene er på langt nær ferdige. Ligger kun
 		på github så jeg får testet ut siden :) </b>
 
-<b>NB3! Klassene mine kokobåde deklareres og defineres i header-filen sin. Jeg jørs på det.</b>
+<b>NB3! Klassene mine både deklareres og defineres i header-filen sin. Jeg jørs på det.</b>
