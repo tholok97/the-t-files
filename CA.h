@@ -81,6 +81,7 @@ class CA {
 		int getGen() { return gen; }
 		char getInk() { return ink; }
 		char getBackground() { return background; }
+		void setRuleset(const int rulesetInt);
 		void setInk(char c) { ink = c; }
 		void setBackground(char c) { background = c; }
 		
@@ -96,7 +97,10 @@ class CA {
 
 		// Overloadede increment operatorer (prefix/postfix)
 		CA& operator++();		// Ta et steg og returner CA'et
-		CA operator++(int);		// Ta et steg og returner forrige steg i CA'et
+		CA operator++(int);		// Ta et steg og returner forrige steg i CA'e
+		
+		// Overloadet [] operator. Gir verdien til en celle ved en indeks
+		const bool operator[](std::size_t index) const { return arr[index]; }
 };
 
 //--------------------------INTERNE UTILITY FUNKSJONER--------------------------
@@ -178,6 +182,10 @@ CA::CA(const int size) {
 }
 
 //---------------------------DIV. FUNKSJONER------------------------------------
+
+void CA::setRuleset(const int rulesetInt) {
+	ruleset = rulesetIntToVec(rulesetInt);
+}
 
 // Printer ut CA med spesifisert bakgrunn og maling (uten linjeskift)
 void CA::print(std::ostream &os, const char background, const char ink) const {
