@@ -22,6 +22,8 @@
 <b>NB! Koden min er skrevet med tabspace satt til 4. Av en eller annen grunn
 		vises Github-kode med 8. Dette gjør dessverre at mange av kommentarene
 		ser helt malplasserte ut...</b>
-</br></br>
+
 <b>NB2! Ingen av disse prosjektene er på langt nær ferdige. Ligger kun
-		på github så jeg får testet ut siden :)</b>
+		på github så jeg får testet ut siden :) </b>
+
+<b>NB3! Klassene mine både deklareres og defineres i header-filen sin. Jeg jørs på det.</b>
