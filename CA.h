@@ -14,6 +14,7 @@
 	-> Overloadede operatore for <<, = {...} og [n]
 	-> Overloade + n, ++ :D :D :D :D :D :D	
 	-> setter for ruleset
+	-> Constructor som tar initializer_list
  * <eksempelbruk1>
  
 	CA ca(200);			// Nytt CA med vidde 200. Default regler brukes (30)

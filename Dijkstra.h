@@ -1,26 +1,25 @@
 /*
  * Dijkstra.h
- * v4.0
- * Beskrivelse: Dijkstra.h lar deg regne ut kjappeste rute gjennom en graf. Et 
-	Dijkstra objekt lages ved Ã¥ oppgi enten en liste med nodenavn og en 
-	nabo(node1, node2)-funksjon for Ã¥ avgjÃ¸re hvilke nodepar som er naboer,
-	en liste med nodenavn og en nabomatrise	eller en grid av bool-verdier, hvor 
-	sann er lovlig terreng og usann er ulovlig terreng (kan brukes til Ã¥ lage 
-	graf direkte fra "kart"). Etter grafen er laget kan en regne ut kjappeste 
-	rute ved Dijkstras algoritme for flere (start, slutt)-par. 
-* NB! Om objektet lages fra grid vil hver node fÃ¥ navn utifra posisjonen sin i 
-	grid. Foreks. vil objekt ved posisjon (2, 13) i et 102 x 53 grid fÃ¥ navn 
-	"002013" (string-navn er en midlertidig lÃ¸sning til  jeg lÃ¦rer meg 
-	template'ering
+ * Beskrivelse: Lar deg finne kjappeste rute gjennom et nettverk ved Dijkstras-
+	algoritme. Klassen er templetert for å støtte mange typer nodenavn. Et 
+	Dijkstra<string> objekt bruker for.eks. string-navn som nodenavn og et 
+	Dijkstra<pair<int, int>> objekt bruker par av int-verdier (r, c). For å 
+	danne et Dijkstra-objekt oppgir man nodenavn-typen, sammen med enten en
+	nodeliste og en nabomatrise, eller en nodeliste og en nabofunksjon. Når
+	objektet er klargjort kan en finne kjappeste sti fra ulike start- og slutt-
+	par. Stier returneres som vektorer av nodenavn-type.
+	Et Dijkstra-objekt kan også dannes basert på et (m x n) grid av boolske 
+	verdier ved hjelp av en global funksjon. Noder får da navn at typen
+	pair<int, int>, og med verdier basert på (r, c)-koordinatene sine i gridet.
  * Potensielle forbedringer:
 	- bruke <algorithm> "enda" mer aktivt
-	- unvisited burde vÃ¦re priority queue?
-	- nodes burde vÃ¦re set (??)
-	- nodenavntypen burde kunne velges (template) (eks: 
-		Dijkstra<pair<int,int>> (...) <- nodenavn er par av int'er (x,y))
-	- rydde opp :^)
-	- OBS! koden burde bruke utility-funksjoene som konverterer fra name til
-		(r,c) og omvendt.
+	- unvisited burde være priority queue?
+	- nodes burde v're set (??)
+	- bruke array istedefor vector (templetere størrelsen) ?
+	- constructor som tar liste med nodenavn burde bruke set? (bruker vector)
+	- ::nodetype, ::pathtype    (?) :D
+	- Teste eksempla...
+	- Erstatte vektor med set det vektor e unødvendig
  * <eksempelbruk 1>
  
 	vector<vector<bool>> grid = {	{1,1,1,0,1,1,1,1},		// "kartet"
@@ -34,13 +33,13 @@
 									{1,1,1,1,1,1,0,1},
 									{1,1,1,1,1,1,1,1}};
 	
-	// Dijkstra-objekt basert pÃ¥ grid. Navn blir valgt etter posisjon i grid
-	Dijkstra d(grid);
-	vector<string> path = d.findPath("00", "07");	// rute fra (0,0) til (0,7)
+	// Dijkstra-objekt basert på grid. Navn blir valgt etter koordinater i grid
+	Dijkstra<pair<int, int> d = gridToDijkstra(grid);
+	vector<string> path = d.findPath({0,0}, {0,7});	// rute fra (0,0) til (0,7)
 	
-	cout << "Best path from 00 to 07 is: ";			// print rute
-	for (string step : path)
-		cout << step << " ";
+	cout << "Best path from (0,0) to (0,7) is: ";			// print rute
+	for (pair<int, int> step : path)
+		cout << "(" << step.first << ", " << step.second << ") > ";
 	
    </eksempelbruk 1>
  * <eksempelbruk 2>
@@ -51,12 +50,12 @@
 										{1,0,0,0},
 										{4,1,0,0}};
 	
-	Dijkstra d(nodes, admatrix);	// Dijkstra-objekt
+	Dijkstra<string> d(nodes, admatrix);	// Dijkstra-objekt
 	
 	vector<string> path = d.findPath("A", "D");	// finn sti fra A til D
 	
 	for (string step : path)	// print sti
-		cout << step << endl;
+		cout << step << " > ";
 	
  
    </eksempelbruk 2>
@@ -69,49 +68,51 @@
 #include <algorithm>
 #include <utility>
 #include <map>
-#include <string>
 #include <set>
 
+// T er nodenavn-type
+template<typename T>
 class Dijkstra {
 	
 	private:
-		// advec er kantlista
-		std::map<std::string, std::vector<std::pair<std::string, int>>> advec;
-		std::vector<std::string> nodes;	// navnene til nodene
-		const int INF = 999999;			// "evig"
+		// advec er kantlista (en map fra T til vektor av (T, int)-par)		  :p
+		std::map<T, std::vector<std::pair<T, int>>> advec;
+		std::vector<T> nodes;	// navnene til nodene
+		const int INF = 999999;	// "evig"
 		bool broken = false;	// flagg som blir true hvis constructor feiler
 		
-		// init basert pÃ¥ noder og nabofunskjon
-		void init(std::vector<std::string> nodes, 
-				int (*neighboor)(std::string a, std::string b));
+		// init basert på noder og nabofunskjon
+		void init(std::vector<T> nodes, int (*neighboor) (T a, T b));
 		
 	public:
 		// constructorer
-		Dijkstra(std::vector<std::string> nodes,	// nodeliste + nabofunksjon 
-				int (*neighboor)(std::string a, std::string b));
-		Dijkstra(std::vector<std::string> nodes, 	// nodeliste + nabomatrise
+		Dijkstra(std::vector<T> nodes,	// nodeliste + nabofunksjon 
+				int (*neighboor)(T a, T b));
+		Dijkstra(std::vector<T> nodes, 	// nodeliste + nabomatrise
 				std::vector<std::vector<int>> adjacencyMatrix);
-		Dijkstra(std::vector<std::vector<bool>> grid);	// grid (navn blir r,c)
-		
+
 		// funksjoner
-		std::vector<std::string> findPath(std::string start,	// finner sti
-				std::string end);								// ved dijkstra
+		std::vector<T> findPath(T start, T end);  // finner sti ved dijkstra
 		// Samme som over ^ , men lagrer besøkte nodenavn i set
-		std::vector<std::string> findPathSaveVisited(std::string start,	  
-				std::string end, std::set<std::string> &visited);
+		std::vector<T> findPathSaveVisited(T start, T end, 
+				std::set<T> &visited);
 };
 
 // Globale funksjoner:
-std::string rcToNodeName(int r, int c, int digits); 	// (r,c) -> name
-std::pair<int, int> nodeNameToRCPair(std::string name);	// name -> (r,c)
+
+// Returnerer et Dijkstra objekt med pair<int, int> som nodenavn basert på
+//	et grid. Nodene får navn utifra posisjonen sin i gridet (r,c)
+Dijkstra<std::pair<int, int>> gridToDijkstra(std::vector<
+		std::vector<bool>> grid);
 
 //---------------------------------CONSTRUCTORS---------------------------------
 
-// Lager et nytt objekt basert pÃ¥ en liste med nodenavn og en funskjon som kan
-//  brukes for Ã¥ sjekke hvilke av nodene i listen som er naboer. Kantliste blir
-//  basert pÃ¥ denne informasjonen. Bruker init
-Dijkstra::Dijkstra(std::vector<std::string> nodes, 
-		int (*neighboor)(std::string a, std::string b)) {
+// Lager et nytt objekt basert på en liste med nodenavn og en funskjon som kan
+//  brukes for å sjekke hvilke av nodene i listen som er naboer. Kantliste blir
+//  basert på denne informasjonen. Bruker init
+template<typename T>
+Dijkstra<T>::Dijkstra(std::vector<T> nodes, 
+		int (*neighboor)(T a, T b)) {
 
 	// om nodelista er tom gir vi opp..
 	if (nodes.empty()) {
@@ -122,9 +123,10 @@ Dijkstra::Dijkstra(std::vector<std::string> nodes,
 	init(nodes, neighboor);
 }
 
-// Lager et nytt objekt basert pÃ¥ en liste med nodenavn og en nabomatrise. 
-//	Matrisen MÃ… vÃ¦re (antall nodenavn) x (antall nodenavn)!!!!!
-Dijkstra::Dijkstra(std::vector<std::string> nodes, 
+// Lager et nytt objekt basert på en liste med nodenavn og en nabomatrise. 
+//	Matrisen må være (antall nodenavn) x (antall nodenavn)!!!!!
+template<typename T>
+Dijkstra<T>::Dijkstra(std::vector<T> nodes, 
 		std::vector<std::vector<int>> adjacencyMatrix) {
 
 	// Sjekk om infoen er gyldig. Hvis ikke: gi opp..
@@ -145,311 +147,244 @@ Dijkstra::Dijkstra(std::vector<std::string> nodes,
 
 	this->nodes = nodes;	// lagrer nodenavnene i this->nodes
 	
-	// GÃ¥r igjennom nabomatrisa lager advec basert pÃ¥ den
+	// Går igjennom nabomatrisa og lager advec basert på den
 	for (std::vector<std::vector<int>>::size_type i = 0; 
 			i < adjacencyMatrix.size(); ++i) {
 		for (std::vector<int>::size_type j = 0; j < adjacencyMatrix[i].size();
 				++j) {
 			if (adjacencyMatrix[i][j])
-				advec[nodes[j]].push_back(std::pair<std::string, int>(nodes[i], 
+				advec[nodes[j]].push_back(std::pair<T, int>(nodes[i], 
 						adjacencyMatrix[i][j]));
 		}
 	}
 }
 
-// Lager et nytt objekt basert pÃ¥ en grid av sann / usann -verdier. Finner pÃ¥
-//  egne navn til nodene og lager en nabofunskjon som baserer seg pÃ¥ mÃ¥ten
-//  navnene blir gitt pÃ¥. Navnene til nodene blir (r,c) (foreks: "13" = noden
-//  pÃ¥ rad 1, sÃ¸yle 3 i griden. sann blir tolket som lovlig node, usann blir
-//  tolket som mangel pÃ¥ node (vegg)
-// NB! noder fÃ¥r automatisk navn basert pÃ¥ posisjon i grid
-Dijkstra::Dijkstra(std::vector<std::vector<bool>> grid) {
-													
-	// om grid er tom, gi opp
-	if (grid.empty()) {
-		broken = true;
-		return;
-	} else if (grid[0].empty()) {
-		broken = true;
-		return;
-	}
-													
-	std::vector<std::string> nodes;		// nodenavn				
-													
-	// regner ut hvor mange siffer hver r og c trenger
-	int max_size = (grid.size()>grid[0].size()) ? grid.size() : grid[0].size();
-	int digits = std::to_string(max_size-1).size();
-													
-	// noder fÃ¥r navn etter koordinatene sine i grid
-	for (std::vector<std::vector<bool>>::size_type i = 0; 
-			i < grid.size(); ++i) {
-		for (std::vector<bool>::size_type j = 0; j < grid[i].size(); ++j) {
-			if (grid[i][j]) {
-				// navnet blir r + c (foreks: "0001 + 0312" == "00010312"
-				nodes.push_back(rcToNodeName(i, j, digits));
-			}
-		}
-	}
-
-	// nabofunsksjon som baserer seg pÃ¥ navngivingen til nodene til Ã¥ finne ut
-	//  om to noder er naboer. To noder er naboer hvis (abs(r1 - r2) + 
-	//  abs(c1 + c2)) er mellom 0 og 2
-	auto neighboor = [](std::string a, std::string b) -> int {
-
-					std::pair<int, int> arcPair = nodeNameToRCPair(a);
-					std::pair<int, int> brcPair = nodeNameToRCPair(b);
-					
-					int ar = arcPair.first, ac = arcPair.second;
-					int br = brcPair.first, bc = brcPair.second;
-					
-					// regner ut r-differanse og c-differanse
-					int dr = ar - br, dc = ac - bc;
-					
-					if (dr < 0)		// absoluttverdi
-						dr *= -1;
-					
-					if (dc < 0)		// absoluttverdi
-						dc *= -1;
-
-					int d = dr + dc;	// totaldifferanse
-
-					// returner true hvis totaldifferanse er mellom 0 og 2
-					// false hvis ikke
-					return (d < 2 && d > 0) ? 1 : 0;
-				};
-	
-	init(nodes, neighboor);		// initialiser med nodene og nabofunksjonen
-}
-
 //--------------------------------FUNKSJONER------------------------------------
 
-// Lager kantlista basert pÃ¥ en vektor av nodenavn og en funksjon fÃ¥r Ã¥ sjekke
+// Lager kantlista basert på en vektor av nodenavn og en funksjon for å sjekke
 //  om to noder er naboer
-void Dijkstra::init(std::vector<std::string> nodes, 		// funker bare for
-		int (*neighboor)(std::string a, std::string b)) {	// max 10x10 (0-9)
+template<typename T>
+void Dijkstra<T>::init(std::vector<T> nodes, int (*neighboor)(T a, T b)) {
 			
 	this->nodes = nodes;	// lagrer nodenavnene i this->nodes
 	
-	for (std::string sa : nodes)		// loop gjennom nodes x nodes
-		for (std::string sb : nodes)
-			if (neighboor(sa, sb))		// Hvis sa og sb er naboer: legg til 
-				advec[sa].push_back(	// (sb, (sa->sb)-vekt) par til sa
-						std::pair<std::string, int>(sb, neighboor(sa, sb)));
+	for (T a : nodes)		// loop gjennom nodes x nodes
+		for (T b : nodes)
+			if (neighboor(a, b))		// Hvis a og b er naboer: legg til 
+				advec[a].push_back(		// (b, (a->b)-vekt) par til a
+						std::pair<T, int>(b, neighboor(a, b)));	// TODO
 }
 
-// UtfÃ¸rer Dijkstras algoritme pÃ¥ advec med (start, end). Returnerer stien som 
+// Utfører Dijkstras algoritme på advec med (start, end). Returnerer stien som 
 //  en vektor av nodenavn hvis denne finnes, eller en tom sti dersom ingen stier
 //  finnes.
-std::vector<std::string> Dijkstra::findPath(std::string start, 
-		std::string end) {
+template<typename T>
+std::vector<T> Dijkstra<T>::findPath(T start, T end) {
 
 	// Om broken, gi opp..
 	if (broken)
-		return std::vector<std::string>();
+		return std::vector<T>();
 	
 	// Om start eller slutt ikke finnes i nodelista, returner en tom sti (feil)
 	if (find(nodes.begin(), nodes.end(), start) == nodes.end() ||
 			find(nodes.begin(), nodes.end(), end) == nodes.end()) {
-		return std::vector<std::string>();	
+		return std::vector<T>();	
 	}
 		
-	std::string current;	// noden som evalueres.
-	std::map<std::string, int> dist;			// distanse fra start til [node]	
-	std::map<std::string, std::string> prev;	// parent til [node]
-	std::set<std::string> unvisited;			// set av ubesÃ¸kte noder
+	T current;					// noden som evalueres.
+	std::map<T, int> dist;		// distanse fra start til [node]	
+	std::map<T, T> prev;		// parent til [node]
+	std::set<T> unvisited;		// set av ubesøkte noder
 	
-	for (std::string n : nodes) {		// Sett dist til alle noder til INF,
-		dist[n] = INF;					// prev til alle noder til "" og
-		prev[n] = "";					// legg alle noder unntatt start til
-		if (n != start)					// unvisited
+	for (T n : nodes) {				// Sett dist til alle noder til INF,
+		dist[n] = INF;				// prev til alle noder til T() og
+		prev[n] = T();				// legg alle noder unntatt start til
+		if (n != start)				// unvisited
 			unvisited.insert(n);
 	}
 	
 	dist[start] = 0;	// distansen fra start til seg selv er 0;
 	
-	current = start;	// vi begynner med Ã¥ evaluere start
+	current = start;	// vi begynner med å evaluere start
 	
-	// utfÃ¸rer loopen pÃ¥ Ã©n node av gangen. Fortsetter til kjappest sti blir 
+	// utfører loopen på én node av gangen. Fortsetter til kjappest sti blir 
 	// funnet, eller til det blir konkludert med at ingen stier finnes.
 	while (true) {
 		
-		// Se pÃ¥ de ubesÃ¸kte nodene til current, foreslÃ¥ ny dist via current,
-		// hvis denne er mindre enn dist som er lagret, oppdater
-		for (std::pair<std::string, int> neighboor : advec[current]) {
+		// Se på de ubesøkte nodene til current, foreslå ny dist via current,
+		//	hvis denne er mindre enn dist som er lagret, oppdater
+		for (std::pair<T, int> neighboor : advec[current]) {
 			if (unvisited.find(neighboor.first) != unvisited.end()) {
 				int tentDist = dist[current] + neighboor.second;
 				if (tentDist < dist[neighboor.first]) {	// Hvis ny er mindre:
-					dist[neighboor.first] = tentDist;		// oppdater dist
-					prev[neighboor.first] = current;		// oppdtaer prev
+					dist[neighboor.first] = tentDist;	// oppdater dist
+					prev[neighboor.first] = current;	// oppdtaer prev
 				}
 			}
 		}
 		
-		// har "besÃ¸kt" current. fjern fra ubesÃ¸kt
+		// har "besøkt" current. fjern fra ubesøkt
 		unvisited.erase(current);
 		
-		// hvis vi har besÃ¸kt unvisited: FERDIG
+		// hvis vi har besøkt unvisited: FERDIG
 		if (unvisited.find(end) == unvisited.end())	
 			break;
 		
-		// Finn den ubesÃ¸kte noden med lavest dist
-		std::pair<std::string, int> lowest(*(unvisited.begin()), 
+		// Finn den ubesøkte noden med lavest dist
+		std::pair<T, int> lowest(*(unvisited.begin()), 
 				dist[*(unvisited.begin())]);
 				
 		
-		for (std::string n : unvisited) {
+		for (T n : unvisited) {
 			if (dist[n] < lowest.second) {
-				lowest = std::pair<std::string, int>(n, dist[n]);
+				lowest = std::pair<T, int>(n, dist[n]);
 			}
 		}
 		
-		if (lowest.second == INF) {				// Finnes ingen sti... gi opp :(
-			return std::vector<std::string>();	// returner en tom sti (FERDIG)
+		if (lowest.second == INF) {		// Finnes ingen sti... gi opp :(
+			return std::vector<T>();	// returner en tom sti (FERDIG)
 		} else {
-			current = lowest.first;				// sett current til noden med
-		}										// minst dist
+			current = lowest.first;			// sett current til noden med
+		}									// minst dist
 	}
-	std::vector<std::string> rpath;				// stien (baklengs)
+	std::vector<T> rpath;				// stien (baklengs)
 	
 	// regn ut stien (baklengs) utifra prev[] inn i rpath
-	std::string s = end;
+	T s = end;
 	while (s != start) {
 		rpath.push_back(s);
 		s = prev[s];
 	}
 	rpath.push_back(start);
 	
-	reverse(rpath.begin(), rpath.end());	// reverser for Ã¥ fÃ¥ start -> end
+	reverse(rpath.begin(), rpath.end());	// reverser for å få start -> end
 		
 		
 	return rpath; // returner sti
 }
 
-// UtfÃ¸rer Dijkstras algoritme pÃ¥ advec med (start, end). Returnerer stien som 
+// Utfører Dijkstras algoritme på advec med (start, end). Returnerer stien som 
 //  en vektor av nodenavn hvis denne finnes, eller en tom sti dersom ingen stier
-//  finnes. Legger også til besøkte noder i visited settet
-std::vector<std::string> Dijkstra::findPathSaveVisited(std::string start, 
-		std::string end, std::set<std::string> &visited) {
+//  finnes. Legger besøkte noder til i 'visited'
+template<typename T>
+std::vector<T> Dijkstra<T>::findPathSaveVisited(T start, T end,	
+		std::set<T> &visited) {
 
 	// Om broken, gi opp..
 	if (broken)
-		return std::vector<std::string>();
+		return std::vector<T>();
 	
 	// Om start eller slutt ikke finnes i nodelista, returner en tom sti (feil)
 	if (find(nodes.begin(), nodes.end(), start) == nodes.end() ||
 			find(nodes.begin(), nodes.end(), end) == nodes.end()) {
-		return std::vector<std::string>();	
+		return std::vector<T>();	
 	}
 		
-	std::string current;	// noden som evalueres.
-	std::map<std::string, int> dist;			// distanse fra start til [node]	
-	std::map<std::string, std::string> prev;	// parent til [node]
-	std::set<std::string> unvisited;			// set av ubesÃ¸kte noder
+	T current;					// noden som evalueres.
+	std::map<T, int> dist;		// distanse fra start til [node]	
+	std::map<T, T> prev;		// parent til [node]
+	std::set<T> unvisited;		// set av ubesøkte noder
 	
-	for (std::string n : nodes) {		// Sett dist til alle noder til INF,
-		dist[n] = INF;					// prev til alle noder til "" og
-		prev[n] = "";					// legg alle noder unntatt start til
-		if (n != start)					// unvisited
+	for (T n : nodes) {				// Sett dist til alle noder til INF,
+		dist[n] = INF;				// prev til alle noder til T() og
+		prev[n] = T();				// legg alle noder unntatt start til
+		if (n != start)				// unvisited
 			unvisited.insert(n);
 	}
 	
 	dist[start] = 0;	// distansen fra start til seg selv er 0;
 	
-	current = start;	// vi begynner med Ã¥ evaluere start
+	current = start;	// vi begynner med å evaluere start
 	
-	// utfÃ¸rer loopen pÃ¥ Ã©n node av gangen. Fortsetter til kjappest sti blir 
+	// utfører loopen på én node av gangen. Fortsetter til kjappest sti blir 
 	// funnet, eller til det blir konkludert med at ingen stier finnes.
 	while (true) {
 		
-		// Se pÃ¥ de ubesÃ¸kte nodene til current, foreslÃ¥ ny dist via current,
-		// hvis denne er mindre enn dist som er lagret, oppdater
-		for (std::pair<std::string, int> neighboor : advec[current]) {
+		// Se på de ubesøkte nodene til current, foreslå ny dist via current,
+		//	hvis denne er mindre enn dist som er lagret, oppdater
+		for (std::pair<T, int> neighboor : advec[current]) {
 			if (unvisited.find(neighboor.first) != unvisited.end()) {
 				int tentDist = dist[current] + neighboor.second;
 				if (tentDist < dist[neighboor.first]) {	// Hvis ny er mindre:
-					dist[neighboor.first] = tentDist;		// oppdater dist
-					prev[neighboor.first] = current;		// oppdtaer prev
+					dist[neighboor.first] = tentDist;	// oppdater dist
+					prev[neighboor.first] = current;	// oppdtaer prev
 				}
 			}
 		}
 		
-		// har "besÃ¸kt" current. fjern fra ubesÃ¸kt
+		// har "besøkt" current. fjern fra ubesøkt. legg til i besøkt
 		unvisited.erase(current);
 		visited.insert(current);
 		
-		// hvis vi har besÃ¸kt unvisited: FERDIG
+		// hvis vi har besøkt unvisited: FERDIG
 		if (unvisited.find(end) == unvisited.end())	
 			break;
 		
-		// Finn den ubesÃ¸kte noden med lavest dist
-		std::pair<std::string, int> lowest(*(unvisited.begin()), 
+		// Finn den ubesøkte noden med lavest dist
+		std::pair<T, int> lowest(*(unvisited.begin()), 
 				dist[*(unvisited.begin())]);
 				
-		for (std::string n : unvisited) {
+		
+		for (T n : unvisited) {
 			if (dist[n] < lowest.second) {
-				lowest = std::pair<std::string, int>(n, dist[n]);
+				lowest = std::pair<T, int>(n, dist[n]);
 			}
 		}
 		
-		if (lowest.second == INF) {				// Finnes ingen sti... gi opp :(
-			return std::vector<std::string>();	// returner en tom sti (FERDIG)
+		if (lowest.second == INF) {		// Finnes ingen sti... gi opp :(
+			return std::vector<T>();	// returner en tom sti (FERDIG)
 		} else {
-			current = lowest.first;				// sett current til noden med
-		}										// minst dist
+			current = lowest.first;			// sett current til noden med
+		}									// minst dist
 	}
-	std::vector<std::string> rpath;				// stien (baklengs)
+	std::vector<T> rpath;				// stien (baklengs)
 	
 	// regn ut stien (baklengs) utifra prev[] inn i rpath
-	std::string s = end;
+	T s = end;
 	while (s != start) {
 		rpath.push_back(s);
 		s = prev[s];
 	}
 	rpath.push_back(start);
 	
-	reverse(rpath.begin(), rpath.end());	// reverser for Ã¥ fÃ¥ start -> end
+	reverse(rpath.begin(), rpath.end());	// reverser for å få start -> end
 		
 		
 	return rpath; // returner sti
 }
 
-//----------------------------GLOBALE FUNKSJONER--------------------------------
+//------------------------------GLOBALE FUNKSJONER------------------------------
 
-// Tar et (r,c) par og returnerer et nodenavn med minimumslengde 2 * digits
-// Midlertidig løsning mens jeg lærer meg kunsten å skrive template-typer
-std::string rcToNodeName(int r, int c, int digits) {
+// Tar et 2-dimensjonelt grid av boolske verdier og danner nodeliste og 
+//	nabofunksjon for dette. Returnerer et Dijkstra-objekt hvor nodenavn er 
+//	pair<int, int>. Noder får navn basert på (r, c)-koordinatene sine i gridet.
+Dijkstra<std::pair<int, int>> gridToDijkstra(std::vector<
+		std::vector<bool>> grid) {
 
-	if (r < 0 || c < 0) 	// returner en tom string ved ugyldige verdier
-		return "";
+	// Bygger nodelista til grid
+	std::vector<std::pair<int, int>> nodes;
+	for (std::vector<std::vector<bool>>::size_type i = 0; i < grid.size(); ++i)
+		for (std::vector<bool>::size_type j = 0; j < grid[i].size(); ++j)
+			if (grid[i][j])
+				nodes.push_back(std::make_pair(i,j));
 	
-	std::string rs = std::to_string(r);		// Oversetter til string
-	std::string cs = std::to_string(c);
+	// Funksjon som bruker (r, c)-koordinatene til å bestemme om to noder er
+	//	naboer
+	auto neighboor = [](std::pair<int, int> a, std::pair<int, int> b) -> int {
+		int r_diff = a.first - b.first;
+		int c_diff = a.second - b.second;
 
-	for (;rs.size() < digits; rs = "0" + rs); 		// legger til 0 slik at  
-	for (;cs.size() < digits; cs = "0" + cs);		// lengden blir digits
+		if (r_diff < 0)
+			r_diff *= -1;
 
-	return rs + cs; 	// returnerer den samlede stringen rs + cs
-}
+		if (c_diff < 0)
+			c_diff *= -1;
 
-// Tar et nodenavn på formen "rc" og returnerer r og c som et par av inter
-// NB! bruk bare på navn på formen "rc". Midltertidig løsning mens jeg lærer meg
-// kunsten å skrive template-typer
-std::pair<int, int> nodeNameToRCPair(std::string name) {
+		return (r_diff + c_diff < 2) ? 1 : 0;
+	};
 
-	if (name.empty()) {		// ved ugyldig nanv, return ugyldig string
-		return std::pair<int, int>(-1, -1);
-	} else if (name.size() % 2 != 0) {
-		return std::pair<int, int>(-1, -1);
-	}
-
-	// henter ut r, c informasjonen fra name
-	std::string rs = name.substr(0,name.size()/2);
-	std::string cs = name.substr(name.size()/2, name.size()/2);
-
-	int r = stoi(rs); 	// oversetter til int
-	int c = stoi(cs);
-
-	return std::pair<int, int>(r, c);	// returnerer et par med (r, c)
+	// Returner et Dijkstra-objekt basert på nodelista og nabofunksjonen
+	return Dijkstra<std::pair<int, int>>(nodes, neighboor);
 }
 
 #endif
