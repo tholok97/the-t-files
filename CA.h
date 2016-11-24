@@ -1,11 +1,7 @@
 /*
  * CA.h
- * v1.0
- * Beskrivelse: CA er en implementasjon av et elementÃ¦rt cellular automata 
-	system. Kan bruke CA til Ã¥ simulere steg av et gitt system. CA inneholder 
-	funksjoner for Ã¥ printe generasjonene med cout, men det er ogsÃ¥ mulig Ã¥
-	ta systemet direkte Ã¥ lage egen output. Et system er i denne klassen 
-	beskrevet som en vektor av booler, typdef'et til vec.
+ * Beskrivelse: CA er en implementasjon av et elementært cellular automata 
+	system.
  * Der input er valgfritt brukes disse defaultverdiene:
 	- Regel: 		30
 	- Bakgrunn: 	'0'
@@ -19,9 +15,9 @@
  
 	CA ca(200);			// Nytt CA med vidde 200. Default regler brukes (30)
 	while (true) {		
-		ca.printf();	// Print systemet pÃ¥ egen linje med default verdier
+		ca.printf();	// Print systemet på egen linje med default-verdier
 		ca.step();		// Ta et steg
-	}					// Repeter^. En fÃ¥r da se generasjonene av et CA i cmd
+	}					// Repeter^. En får da se generasjonene av et CA i cmd
 	
    </eksempelbruk1>
  * <eksempelbruk2>
@@ -30,7 +26,7 @@
 	CA ca(vector<bool>(tmp, tmp+10), 82);	// nytt CA med tmp og regel 82
 	for (int i = 0; i < 30; ++i) {			// vis 30 generasjoner
 		ca.print(219, ' ');					// vis med 219 maling, ' ' bakgrunn
-		cout << " Gen: " << i << endl;		// legg pÃ¥ hvilken gen det er og \n
+		cout << " Gen: " << i << endl;		// legg på hvilken gen det er og \n
 		ca.step();							// ta neste steg
 	}
 	
@@ -55,10 +51,10 @@ class CA {
 		static const char DEFAULTINK = '1';				// default ink
 		
 		// typedef av vec siden det brukes over gjennom hele koden
-		typedef std::vector<bool>  vec;
+		typedef std::vector<bool> vec;
 		
-		vec arr; 		// den nÃ¥vÃ¦rende tilstanden til systemet
-		vec ruleset;	// regelsettet Ã¥ bruke pÃ¥ systemet for hvert steg
+		vec arr; 		// den nåværende tilstanden til systemet
+		vec ruleset;	// regelsettet å bruke på systemet for hvert steg
 		int gen;		// hvilken "generasjon" systemet er i
 		char ink, background;	// maling
 		
@@ -88,7 +84,7 @@ class CA {
 		
 		// Div. funksjoner:
 		void print(std::ostream &os, const char background, 
-				const char ink) const; // print på os med maling
+				const char ink) const; // print på 'os' med maling
 		void printf(std::ostream &os, const char background, 
 				const char ink) const;	// -||- pluss \n
 		void print(std::ostream &os) const;		// print med default maling
@@ -121,9 +117,9 @@ void CA::init(const vec initArr, const int rulesetInt) {
 //  en vec.
 CA::vec CA::rulesetIntToVec(int rulesetInt) {
 	
-	bool tmp[8];						// tmp bool array til utregning
+	bool tmp[8];						// midlertidig bool-array til utregning
 	
-	// gjÃ¸r rulesetInt om til et binÃ¦rtall lagret i tmp
+	// gjør rulesetInt om til et binærtall lagret i tmp
 	int i = 0, r;						
 	while (rulesetInt != 0) {
 		r = rulesetInt % 2;
@@ -135,14 +131,14 @@ CA::vec CA::rulesetIntToVec(int rulesetInt) {
 	for (int j = i; j < 8; ++j)
 		tmp[j] = false;
 	
-	return vec(tmp, tmp+8); 	// returnerer en vec basert pÃ¥ tmp
+	return vec(tmp, tmp+8); 	// returnerer en vec basert på tmp
 }
 
-// Returnerer ny verdi for en celle basert pÃ¥ (a, b, c) = (cellen til venstre,
-//  cellen selv, og cellen til hÃ¸yre) basert pÃ¥ regelsettet. GjÃ¸r dette ved Ã¥
-//  oversette det binÃ¦re tallet abc om til en posisjon i regelsettet ved: 
-//  a*4 + b*2 + c. (tvinger verdiene til Ã¥ vÃ¦re enten 1 eller 0 siden bool
-//  ikke garanterer Ã¥ vÃ¦re en av disse
+// Returnerer ny verdi for en celle basert på (a, b, c) = (cellen til venstre,
+//  cellen selv, og cellen til høyre) basert på regelsettet. Gjør dette ved å
+//  oversette det binære tallet abc om til en posisjon i regelsettet ved: 
+//  a*4 + b*2 + c. (tvinger verdiene til å være enten 1 eller 0 siden bool
+//  ikke garanterer å være en av disse
 bool CA::rules(const bool a, const bool b, const bool c) {
 	
 	return ruleset[((a != 0) ? 1 : 0)*4 + ((b != 0) ? 1 : 0)*2 +
@@ -151,20 +147,20 @@ bool CA::rules(const bool a, const bool b, const bool c) {
 
 //--------------------------------CONSTRUCTORS----------------------------------
 
-// Lager et nytt CA basert pÃ¥ en utgangs-vec og et regelsettnummer.
+// Lager et nytt CA basert på en utgangs-vec og et regelsettnummer.
 CA::CA(const vec initArr, const int rulesetInt) {
 	
 	init(initArr, rulesetInt);
 }
 
-// Lager et nytt CA basert pÃ¥ et utgangs-vec og default regelsettnummer
+// Lager et nytt CA basert på et utgangs-vec og default regelsettnummer
 CA::CA(const vec initArr) {
 	
 	init(initArr, DEFAULTRULESET);
 }
 
-// Lager et nytt CA basert pÃ¥ en stÃ¸rrelse og et regelsettnummer. 
-//	Utangs-vec'en blir en vec med stÃ¸rrelse size fyllt med 0'er med Ã©n 1 i 
+// Lager et nytt CA basert på en størrelse og et regelsettnummer. 
+//	Utangs-vec'en blir en vec med størrelse size fyllt med 0'er med én 1 i 
 //	midten.
 CA::CA(const int size, const int rulesetInt) {
 	
@@ -173,8 +169,8 @@ CA::CA(const int size, const int rulesetInt) {
 	init(initArr, rulesetInt);
 }
 
-// Lager et nytt CA basert pÃ¥ en stÃ¸rrelse og default regelsettnummer. Utgangs-
-//  vec'en blir en vec med stÃ¸rrelse size fyllt med 0'er med Ã©n 1 i midten
+// Lager et nytt CA basert på en størrelse og default regelsettnummer. Utgangs-
+//  vec'en blir en vec med størrelse size fyllt med 0'er med én 1 i midten
 CA::CA(const int size) {
 	
 	vec initArr(size);				// tom vec fyllt med 0
@@ -184,6 +180,8 @@ CA::CA(const int size) {
 
 //---------------------------DIV. FUNKSJONER------------------------------------
 
+// Setter for ruleset. Tar et tall (mellom 0 og 255) og oppdaterer ruleset 
+//	basert på dette
 void CA::setRuleset(const int rulesetInt) {
 	ruleset = rulesetIntToVec(rulesetInt);
 }
@@ -215,25 +213,25 @@ void CA::printf(std::ostream &os, const char background, const char ink) const {
 	std::cout << '\n';
 }
 
-// Ta et steg. Oppdater systemet med ruleset. Hver celle i systemet fÃ¥r en ny 
-//  verdi basert pÃ¥ naboene til cellen. (NB! systemet "wrapper": naboene til 
+// Ta et steg. Oppdater systemet med ruleset. Hver celle i systemet får en ny 
+//  verdi basert på naboene til cellen. (NB! systemet "wrapper": naboene til 
 //  i = 0 er max og 1)
 void CA::step() {
 	
 	vec next(arr.size());	// vec for neste steg
 	for (vec::size_type i = 0; i < arr.size(); ++i) {	// Regner ut neste verdi
 		bool a = (i==0) ? arr[arr.size()-1] : arr[i-1];	// for cellen i basert
-		bool b = arr[i];								// pÃ¥ naboene. 
+		bool b = arr[i];								// på naboene. 
 		bool c = (i==arr.size()-1) ? arr[0] : arr[i+1];
 		
 		next[i] = rules(a, b, c);						// regn ut cellen i
 	}
 	
 	arr = next;				// oppdater systemet til det neste systemet
-	++gen;					// Ã¸k gen
+	++gen;					// øk gen
 }
 
-// Ta n antall steg. Utility funksjon. KjÃ¸rer step n ganger.
+// Ta n antall steg. Utility funksjon. Kjører step n ganger.
 void CA::step(const int n) {
 	
 	for (int i = 0; i < n; ++i)
@@ -266,3 +264,20 @@ std::ostream& operator<<(std::ostream &os, const CA &ca) {
 }
 
 #endif
+
+// 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 9
+//  923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 
+// 3 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923
+// 23 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 92
+// 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 9
+//  923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 
+// 3 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923
+// 23 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 92
+// 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 9
+//  923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 
+// 3 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923
+// 23 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 92
+// 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 9
+//  923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 
+// 3 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923
+// 23 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 923 92
