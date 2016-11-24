@@ -189,7 +189,7 @@ bool Screen::drawLine(int x1, int y1, int x2, int y2) {
 		return true;
 	}
 	
-	// FORKLARING PÃ… MATTEN:
+	// FORKLARING PÅ MATTEN:
 	//  Ser for meg en linje mellom (x1, y1) og (x2, y2). Linjen har lengde
 	//	'hyp' og er 'rad' radianer fra x-linja. Tar steg nedover linja på
 	//	størrelse 1 og regner for hvert steg ut hvilken celle jeg lander på.
