@@ -14,7 +14,7 @@
 	scr.print();					// print scr til kommandolinjen
  
    </eksemeplbruk>
- * (Fikset i v1.1) BUGS: linjen tegnes ikke riktig nÃ¥r x1 < x2 XOR y1 < y2
+ * (Fikset i v1.1) BUGS: linjen tegnes ikke riktig når x1 < x2 XOR y1 < y2
  * Potensielle forbedringer:
 	- overloadede []- og <<-operatorer
 */
@@ -35,9 +35,9 @@ class Screen {
 		static const char DEFAULTBACKGROUND = 176;
 		static const char DEFAULTINK = 178;
 		
-		int width, height;				// Vidden og HÃ¸yden pÃ¥ tegneflaten
+		int width, height;				// Vidden og Høyden på tegneflaten
 		char backgroundChar, ink;		// Bakgrunn og maling
-		std::string content;			// string til Ã¥ holde tegneflaten
+		std::string content;			// string til å holde tegneflaten
 		
 		// Interne utility funksjoner
 		bool within(const int x, const int y);	// Sjekk om (x, y) er innenfor
@@ -99,7 +99,7 @@ bool Screen::swap(float &a, float &b) {
 
 //-------------------------Constructors-----------------------------------------
 
-// Constructor for Screen. Lager en ny Screen basert pÃ¥ vidde, hÃ¸yde, bakgrunn
+// Constructor for Screen. Lager en ny Screen basert på vidde, høyde, bakgrunn
 //  og maling. Fyller tegneflaten med bakgrunnsmaling
 Screen::Screen(const int width, const int height, const char backgroundChar, 
 		const char ink) {
@@ -118,8 +118,8 @@ Screen::Screen(const int width, const int height, const char backgroundChar,
 	}
 }
 
-// Alternativ constructor for Screen. Lager en ny Screen basert pÃ¥ vidde og
-//  hÃ¸yde. Bakgrunn og maling blir bestem av standardverdiene lagret i Screen.
+// Alternativ constructor for Screen. Lager en ny Screen basert på vidde og
+//  høyde. Bakgrunn og maling blir bestem av standardverdiene lagret i Screen.
 Screen::Screen(const int width, const int height) {
 	
 	// Initialiserer variabler
@@ -138,9 +138,9 @@ Screen::Screen(const int width, const int height) {
 
 //-----------------------------Diverse funksjoner-------------------------------
 
-// Tegner en dot ved (x, y). Sjekker fÃ¸rst om (x, y) er utenfor tegneflaten,
+// Tegner en dot ved (x, y). Sjekker først om (x, y) er utenfor tegneflaten,
 //  finner deretter posisjonen i content (pos = x + y*width) og tegner dotten
-//  pÃ¥ tegneflaten. Returner true hvis dotten ble plassert, false hvis ikke
+//  på tegneflaten. Returner true hvis dotten ble plassert, false hvis ikke
 bool Screen::dot(const int x, const int y) {
 	
 	// Sjekker om (x, y) er innenfor tegneflaten. -> (Returnerer false)
@@ -160,15 +160,15 @@ bool Screen::dot(const int x, const int y) {
 	return true;
 }
 
-// Tegner linje fra (x1, y1) til (x2, y2). KjÃ¸rer ikke hvis et punkt er utenfor
-// tegneflaten. Returnerer true hvis tegningen ble utfÃ¸rt, false hvis ikke.
+// Tegner linje fra (x1, y1) til (x2, y2). Kjører ikke hvis et punkt er utenfor
+// tegneflaten. Returnerer true hvis tegningen ble utført, false hvis ikke.
 bool Screen::drawLine(int x1, int y1, int x2, int y2) {
 	
 	// Kontroller at punktene er innenfor tegneflaten
 	if (!within(x1, y1) || !within(x2, y2))
 		return false;
 	
-	// Hvis den prÃ¸ver Ã¥ tegne linja 100% baklengs kan vi svappe start og slutt
+	// Hvis den prøver å tegne linja 100% baklengs kan vi svappe start og slutt
 	if (x1 > x2 && y1 > y2) {
 		swap(x1, x2);
 		swap(y1, y2);
@@ -191,15 +191,15 @@ bool Screen::drawLine(int x1, int y1, int x2, int y2) {
 	
 	// FORKLARING PÃ… MATTEN:
 	//  Ser for meg en linje mellom (x1, y1) og (x2, y2). Linjen har lengde
-	//	'hyp' og er 'rad' radianer fra x-linja. Tar steg nedover linja pÃ¥
-	//	stÃ¸rrelse 1 og regner for hvert steg ut hvilken celle jeg lander pÃ¥.
-	//	GjÃ¸r dette ved Ã¥ sette 'i' = 0.5 (fordi jeg vil tegne linja fra midten 
-	//	av startcellen), og Ã¸ke med 1 for hvert steg. Formelen for cellen (x,y)
-	//	jeg lander pÃ¥ ved 'i' (- 0.5) steg blir da:
+	//	'hyp' og er 'rad' radianer fra x-linja. Tar steg nedover linja på
+	//	størrelse 1 og regner for hvert steg ut hvilken celle jeg lander på.
+	//	Gjør dette ved å sette 'i' = 0.5 (fordi jeg vil tegne linja fra midten 
+	//	av startcellen), og øke med 1 for hvert steg. Formelen for cellen (x,y)
+	//	jeg lander på ved 'i' (- 0.5) steg blir da:
 	//	$$x = i * cos(rad)$$
 	//	$$y = i * sin(rad)$$
-	//	Fortsetter Ã¥ ta steg helt til 'i' blir stÃ¸rre enn 'hyp'.
-	//	NB! Hvis 'deltaX' < 0 sÃ¥ skal vi tegne baklengs i x retning, ganger da
+	//	Fortsetter å ta steg helt til 'i' blir større enn 'hyp'.
+	//	NB! Hvis 'deltaX' < 0 så skal vi tegne baklengs i x retning, ganger da
 	//  x endringen med -1, samme gjelder 'deltaY' < 0
 	
 	float rad = std::atan2(std::abs(deltaY), std::abs(deltaX));
@@ -218,8 +218,8 @@ bool Screen::drawLine(int x1, int y1, int x2, int y2) {
 	return true;
 }
 
-// Tegn et rektangel med pos (x, y), vidde width og hÃ¸yde height. Funksjonen
-//  kjÃ¸rer bare om rektangelet er innenfor tegneflaten
+// Tegn et rektangel med pos (x, y), vidde width og høyde height. Funksjonen
+//  kjører bare om rektangelet er innenfor tegneflaten
 bool Screen::drawRect(int x, int y, const int width, 
 		const int height) {
 	
