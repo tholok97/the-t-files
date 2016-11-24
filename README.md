@@ -27,3 +27,6 @@
 		på github så jeg får testet ut siden :) </b>
 
 <b>NB3! Klassene mine både deklareres og defineres i header-filen sin. Jeg jørs på det.</b>
+
+</br></br></br></br></br></br>
+923
