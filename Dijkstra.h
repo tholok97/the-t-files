@@ -372,16 +372,16 @@ Dijkstra<std::pair<int, int>> gridToDijkstra(std::vector<
 	//	naboer
 	auto neighboor = [](std::pair<int, int> a, std::pair<int, int> b) -> int {
 		int r_diff = a.first - b.first;
-		int c_diff = a.second - b.second;
-
-		if (r_diff < 0)
-			r_diff *= -1;
-
-		if (c_diff < 0)
-			c_diff *= -1;
-
-		return (r_diff + c_diff < 2) ? 1 : 0;
-	};
+		int c_diff = a.second - b.second;	// FORKLARING:
+											// To noder a og b er naboer
+		if (r_diff < 0)						//  hvis distansen mellom dem 
+			r_diff *= -1;					//	i rader + -||- i søyler er 
+											//	mindre enn 2. a er altså nabo
+		if (c_diff < 0)						//	med b om den befinner seg i
+			c_diff *= -1;					//	en av x'ene:
+													//  x
+		return (r_diff + c_diff < 2) ? 1 : 0;		// xax
+	};												//	x
 
 	// Returner et Dijkstra-objekt basert på nodelista og nabofunksjonen
 	return Dijkstra<std::pair<int, int>>(nodes, neighboor);
