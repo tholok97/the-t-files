@@ -1,6 +1,5 @@
 /*
  * Screen.h
- * v1.1
  * Beskrivelse: Implementasjon av en slags tegneflate i kommandolinjen. Lar deg
 	tegne dotter, linjer og firkanter.
  * Der input er valgfritt gjelder disse defaultverdiene:
@@ -16,6 +15,8 @@
  
    </eksemeplbruk>
  * (Fikset i v1.1) BUGS: linjen tegnes ikke riktig når x1 < x2 XOR y1 < y2
+ * Potensielle forbedringer:
+	- overloadede []- og <<-operatorer
 */
 
 #ifndef SCREENHEADER
