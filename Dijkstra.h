@@ -44,7 +44,7 @@
    </eksempelbruk 1>
  * <eksempelbruk 2>
  
-	vector<string> nodes = {"A", "B", "C", "D"};	// nodeliste
+	set<string> nodes = {"A", "B", "C", "D"};	// nodeliste
 	vector<vector<int>> admatrix = {	{0,0,0,0},	// nabomatrise
 										{0,0,1,0},
 										{1,0,0,0},
