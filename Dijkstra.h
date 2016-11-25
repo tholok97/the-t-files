@@ -129,18 +129,11 @@ template<typename T>
 Dijkstra<T>::Dijkstra(std::vector<T> nodes, 
 		std::vector<std::vector<int>> adjacencyMatrix) {
 
-	// Sjekk om infoen er gyldig. Hvis ikke: gi opp..
-	if (nodes.empty()) {
-		broken = true;
-		return;
-	} else if (adjacencyMatrix.empty()) {
-		broken = true;
-		return;
-	} else if (adjacencyMatrix[0].empty()) {
-		broken = true;
-		return;
-	} else if (nodes.size() != adjacencyMatrix.size() || 
-			nodes.size() != adjacencyMatrix[0].size()) {
+	// Sjekk om infoen er ugyldig. Isåfall: gi opp
+	if (nodes.empty() || adjacencyMatrix.empty() || 
+			adjacencyMatrix[0].empty() || 
+			(nodes.size() != adjacencyMatrix.size()) || 
+			(nodes.size() != adjacencyMatrix[0].size())) {
 		broken = true;
 		return;
 	}
