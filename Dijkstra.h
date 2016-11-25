@@ -76,19 +76,20 @@ class Dijkstra {
 	
 	private:
 		// advec er kantlista (en map fra T til vektor av (T, int)-par)		  :p
-		std::map<T, std::vector<std::pair<T, int>>> advec;
-		std::vector<T> nodes;	// navnene til nodene
+		std::map<T, std::set<std::pair<T, int>>> advec;
+		std::set<T> nodes;	// navnene til nodene
 		const int INF = 999999;	// "evig"
 		bool broken = false;	// flagg som blir true hvis constructor feiler
 		
 		// init basert på noder og nabofunskjon
-		void init(std::vector<T> nodes, int (*neighboor) (T a, T b));
+		void init(std::set<T> nodes, int (*neighboor) (T a, T b));
 		
 	public:
+
 		// constructorer
-		Dijkstra(std::vector<T> nodes,	// nodeliste + nabofunksjon 
+		Dijkstra(std::set<T> nodes,	// nodeliste + nabofunksjon 
 				int (*neighboor)(T a, T b));
-		Dijkstra(std::vector<T> nodes, 	// nodeliste + nabomatrise
+		Dijkstra(std::set<T> nodes, 	// nodeliste + nabomatrise
 				std::vector<std::vector<int>> adjacencyMatrix);
 
 		// funksjoner
@@ -111,7 +112,7 @@ Dijkstra<std::pair<int, int>> gridToDijkstra(std::vector<
 //  brukes for å sjekke hvilke av nodene i listen som er naboer. Kantliste blir
 //  basert på denne informasjonen. Bruker init
 template<typename T>
-Dijkstra<T>::Dijkstra(std::vector<T> nodes, 
+Dijkstra<T>::Dijkstra(std::set<T> nodes, 
 		int (*neighboor)(T a, T b)) {
 
 	// om nodelista er tom gir vi opp..
@@ -126,12 +127,12 @@ Dijkstra<T>::Dijkstra(std::vector<T> nodes,
 // Lager et nytt objekt basert på en liste med nodenavn og en nabomatrise. 
 //	Matrisen må være (antall nodenavn) x (antall nodenavn)!!!!!
 template<typename T>
-Dijkstra<T>::Dijkstra(std::vector<T> nodes, 
+Dijkstra<T>::Dijkstra(std::set<T> nodes, 
 		std::vector<std::vector<int>> adjacencyMatrix) {
 
-	// Sjekk om infoen er ugyldig. Isåfall: gi opp
-	if (nodes.empty() || adjacencyMatrix.empty() || 
-			adjacencyMatrix[0].empty() || 
+	// Sjekk om infoen er ugyldig. Isåfall: gi opp (BRUKER SHORT-CIRCUIT
+	if (nodes.empty() || adjacencyMatrix.empty() ||		// EGENSKAPEN TIL
+			adjacencyMatrix[0].empty() ||				// || -OPERATOREN
 			(nodes.size() != adjacencyMatrix.size()) || 
 			(nodes.size() != adjacencyMatrix[0].size())) {
 		broken = true;
@@ -146,7 +147,7 @@ Dijkstra<T>::Dijkstra(std::vector<T> nodes,
 		for (std::vector<int>::size_type j = 0; j < adjacencyMatrix[i].size();
 				++j) {
 			if (adjacencyMatrix[i][j])
-				advec[nodes[j]].push_back(std::pair<T, int>(nodes[i], 
+				advec[nodes[j]].insert(std::pair<T, int>(nodes[i], 
 						adjacencyMatrix[i][j]));
 		}
 	}
@@ -157,15 +158,14 @@ Dijkstra<T>::Dijkstra(std::vector<T> nodes,
 // Lager kantlista basert på en vektor av nodenavn og en funksjon for å sjekke
 //  om to noder er naboer
 template<typename T>
-void Dijkstra<T>::init(std::vector<T> nodes, int (*neighboor)(T a, T b)) {
+void Dijkstra<T>::init(std::set<T> nodes, int (*neighboor)(T a, T b)) {
 			
 	this->nodes = nodes;	// lagrer nodenavnene i this->nodes
 	
 	for (T a : nodes)		// loop gjennom nodes x nodes
-		for (T b : nodes)
-			if (neighboor(a, b))		// Hvis a og b er naboer: legg til 
-				advec[a].push_back(		// (b, (a->b)-vekt) par til a
-						std::pair<T, int>(b, neighboor(a, b)));	// TODO
+		for (T b : nodes)			// Hvis a og b er naboer: legg til
+			if (neighboor(a, b))	// (b, (a->b)-vekt) i a 
+				advec[a].emplace(b, neighboor(a, b));
 }
 
 // Utfører Dijkstras algoritme på advec med (start, end). Returnerer stien som 
@@ -179,9 +179,8 @@ std::vector<T> Dijkstra<T>::findPath(T start, T end) {
 		return std::vector<T>();
 	
 	// Om start eller slutt ikke finnes i nodelista, returner en tom sti (feil)
-	if (find(nodes.begin(), nodes.end(), start) == nodes.end() ||
-			find(nodes.begin(), nodes.end(), end) == nodes.end()) {
-		return std::vector<T>();	
+	if (nodes.find(start) == nodes.end() || nodes.find(end) == nodes.end()) {
+		return std::vector<T>();
 	}
 		
 	T current;					// noden som evalueres.
@@ -230,7 +229,7 @@ std::vector<T> Dijkstra<T>::findPath(T start, T end) {
 		
 		for (T n : unvisited) {
 			if (dist[n] < lowest.second) {
-				lowest = std::pair<T, int>(n, dist[n]);
+				lowest = std::make_pair(n, dist[n]);
 			}
 		}
 		
@@ -268,9 +267,8 @@ std::vector<T> Dijkstra<T>::findPathSaveVisited(T start, T end,
 		return std::vector<T>();
 	
 	// Om start eller slutt ikke finnes i nodelista, returner en tom sti (feil)
-	if (find(nodes.begin(), nodes.end(), start) == nodes.end() ||
-			find(nodes.begin(), nodes.end(), end) == nodes.end()) {
-		return std::vector<T>();	
+	if (nodes.find(start) == nodes.end() || nodes.find(end) == nodes.end()) {
+		return std::vector<T>();
 	}
 		
 	T current;					// noden som evalueres.
@@ -320,7 +318,7 @@ std::vector<T> Dijkstra<T>::findPathSaveVisited(T start, T end,
 		
 		for (T n : unvisited) {
 			if (dist[n] < lowest.second) {
-				lowest = std::pair<T, int>(n, dist[n]);
+				lowest = std::make_pair(n, dist[n]);
 			}
 		}
 		
@@ -355,11 +353,11 @@ Dijkstra<std::pair<int, int>> gridToDijkstra(std::vector<
 		std::vector<bool>> grid) {
 
 	// Bygger nodelista til grid
-	std::vector<std::pair<int, int>> nodes;
+	std::set<std::pair<int, int>> nodes;
 	for (std::vector<std::vector<bool>>::size_type i = 0; i < grid.size(); ++i)
 		for (std::vector<bool>::size_type j = 0; j < grid[i].size(); ++j)
 			if (grid[i][j])
-				nodes.push_back(std::make_pair(i,j));
+				nodes.emplace(i,j);
 	
 	// Funksjon som bruker (r, c)-koordinatene til å bestemme om to noder er
 	//	naboer
