@@ -14,7 +14,6 @@
  * Potensielle forbedringer:
 	- bruke <algorithm> "enda" mer aktivt
 	- unvisited burde være priority queue?
-	- nodes burde v're set (??)
 	- bruke array istedefor vector (templetere størrelsen) ?
 	- constructor som tar liste med nodenavn burde bruke set? (bruker vector)
 	- ::nodetype, ::pathtype    (?) :D
@@ -44,7 +43,7 @@
    </eksempelbruk 1>
  * <eksempelbruk 2>
  
-	set<string> nodes = {"A", "B", "C", "D"};	// nodeliste
+	set<string> nodes = {"A", "B", "C", "D"};		// nodeliste
 	vector<vector<int>> admatrix = {	{0,0,0,0},	// nabomatrise
 										{0,0,1,0},
 										{1,0,0,0},
@@ -85,6 +84,9 @@ class Dijkstra {
 		void init(std::set<T> nodes, int (*neighboor) (T a, T b));
 		
 	public:
+
+		// typer
+		typedef T node_type;
 
 		// constructorer
 		Dijkstra(std::set<T> nodes,	// nodeliste + nabofunksjon 

@@ -1,6 +1,5 @@
 /*
  * SvgWriter.h
- * v1.0
  * Beskrivelse: SvgWriter lar deg tegne tegninger eksportere dem til svg filer.
 */
 
