@@ -3,8 +3,9 @@
 </br>
 
 <h3>CA.h</h3>
-<p>Lar deg kjøre simuleringer av et elementært cellular 
-		automata-system med et et gitt regelsett</p>
+<p>Lar deg kjøre simuleringer av et elementært cellular automata-system med et 
+		et gitt regelsett. (Jobber på en versjon av denne som bruker 
+		std::bitset.. SPEED AND POWER)</p>
 
 <h3>Screen.h</h3>
 <p>Implementerer en slags tegneflate i 
@@ -26,7 +27,8 @@
 <b>NB2!</b> Ingen av disse prosjektene er på langt nær ferdige. Ligger kun
 		på github så jeg får testet ut siden :)
 
-<b>NB3!</b> Klassene mine både deklareres og defineres i header-filen sin. Jeg jørs på det.
+<b>NB3!</b> Klassene mine både deklareres og defineres i header-filen sin. Jeg 
+		jørs på det.
 
 </br></br></br></br></br></br>
 923

@@ -11,6 +11,7 @@
 	-> Overloade + n, ++ :D :D :D :D :D :D	
 	-> setter for ruleset
 	-> Constructor som tar initializer_list
+	-> bruker std::bitset istedefor vector (side 723 i boka)
  * <eksempelbruk1>
  
 	CA ca(200);			// Nytt CA med vidde 200. Default regler brukes (30)
