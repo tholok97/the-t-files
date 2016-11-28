@@ -5,7 +5,8 @@
 <h3>CA.h</h3>
 <p>Lar deg kjøre simuleringer av et elementært cellular-automata-system med et 
 		et gitt regelsett. (Jobber på en versjon av denne som bruker 
-		std::bitset. SPEED AND POWER!!)</p>
+		std::bitset. SPEED AND POWER!! 
+		https://cdn.meme.am/instances/500x/47600347.jpg)</p>
 
 <h3>Screen.h</h3>
 <p>Implementerer en slags tegneflate i 
