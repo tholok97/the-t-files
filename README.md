@@ -4,8 +4,11 @@
 
 <h3>CA.h</h3>
 <p>Lar deg kjøre simuleringer av et elementært cellular-automata-system med et 
-		et gitt regelsett. (Jobber på en versjon av denne som bruker 
-		std::bitset. SPEED AND POWER!! 
+		et gitt regelsett. </p>
+		
+<h3>CA_2.h</h3>
+<p>Samme som over, men er templetert og bruker std::bitset istedenfor 
+		std::vector. (SPEED AND POWER!! 
 		https://cdn.meme.am/instances/500x/47600347.jpg)</p>
 
 <h3>Screen.h</h3>
