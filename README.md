@@ -2,6 +2,9 @@
 
 </br>
 
+<h3>Dijkstra.h</h3>
+<p>Lar deg finne kjappeste sti i et nettverk</p>
+
 <h3>CA.h</h3>
 <p>Lar deg kjøre simuleringer av et elementært cellular-automata-system med et 
 		gitt regelsett. </p>
@@ -18,9 +21,6 @@
 <h3>SvgWriter.h</h3>
 <p>Lar deg tegne tegninger og eksportere dem som 
 		svg-filer</p>
-
-<h3>Dijkstra.h</h3>
-<p>Lar deg finne kjappeste sti i et nettverk</p>
 
 </br></br>
 
