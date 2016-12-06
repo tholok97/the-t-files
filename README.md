@@ -4,7 +4,7 @@
 
 <h3>CA.h</h3>
 <p>Lar deg kjøre simuleringer av et elementært cellular-automata-system med et 
-		et gitt regelsett. </p>
+		gitt regelsett. </p>
 		
 <h3>CA_2.h</h3>
 <p>Samme som over, men er templetert og bruker std::bitset istedenfor 
