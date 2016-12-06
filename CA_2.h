@@ -157,19 +157,21 @@ bool CA<N>::rules(bool a, bool b, bool c) const {
 }
 
 // Ta et steg. Regner ut ny verdi for alle cellene og lagre dem i et midlertidig 
-//	system. Setter så system lik dette nye systemet og øker 'iteration'
+//	system. Setter så system lik dette nye systemet og øker 'iteration'.
+// NB! Legg merke til at systemet "wrapper". Naboene til celle 0 blir for. eks:
+//	(a: bredde-1, b: 0, c: 1)
 template <std::size_t N>
 void CA<N>::step() {
-	std::bitset<N> next;
+	std::bitset<N> next;	// midlertidig bitset
 	for (std::size_t i = 0; i < system.size(); ++i) {
 		bool a = (i == 0) ? system[system.size() - 1] : system[i - 1];
 		bool b = system[i];
 		bool c = (i == system.size() - 1) ? system[0] : system[i + 1];
 
-		next[i] = rules(a, b, c);
+		next[i] = rules(a, b, c);	// bruker 'rules' til å regne ut ny verdi
 	}
-	system = next;
-	++iteration;
+	system = next;		// setter system til det nye systemet
+	++iteration;		// øker iteration
 }
 
 //--------------------------GLOBAL DEFINITIONS----------------------------------
