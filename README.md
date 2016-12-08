@@ -2,7 +2,7 @@
 
 </br>
 
-<h3>Dijkstra.h</h3>
+<h3><a href="/Dijkstra.h?ts=4">Dijkstra.h</a></h3>
 <p>Lar deg finne kjappeste sti i et nettverk</p>
 
 <h3>CA.h</h3>
