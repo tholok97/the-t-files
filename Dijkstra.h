@@ -19,6 +19,7 @@
 	- ::nodetype, ::pathtype    (?) :D
 	- Teste eksempla...
 	- Erstatte vektor med set det vektor e unødvendig
+	- "evig" burde regnes ut, ikke bare være INT_MAX
  * <eksempelbruk 1>
  
 	vector<vector<bool>> grid = {	{1,1,1,0,1,1,1,1},		// "kartet"
@@ -43,7 +44,7 @@
    </eksempelbruk 1>
  * <eksempelbruk 2>
  
-	set<string> nodes = {"A", "B", "C", "D"};		// nodeliste
+	vector<string> nodes = {"A", "B", "C", "D"};	// nodeliste
 	vector<vector<int>> admatrix = {	{0,0,0,0},	// nabomatrise
 										{0,0,1,0},
 										{1,0,0,0},
@@ -63,11 +64,12 @@
 #ifndef DIJKSTRAHEADER
 #define DIJKSTRAHEADER
 
-#include <vector>
-#include <algorithm>
-#include <utility>
-#include <map>
-#include <set>
+#include <vector>		// vector
+#include <map>			// map
+#include <set>			// set
+#include <utility>		// pair
+#include <algorithm>	// reverse
+#include <climits>		// INT_MAX
 
 // T er nodenavn-type
 template<typename T>
@@ -77,11 +79,8 @@ class Dijkstra {
 		// advec er kantlista (en map fra T til vektor av (T, int)-par)		  :p
 		std::map<T, std::set<std::pair<T, int>>> advec;
 		std::set<T> nodes;	// navnene til nodene
-		const int INF = 999999;	// "evig"
+		const int INF = INT_MAX;	// "evig"	TODO: burde regnes ut
 		bool broken = false;	// flagg som blir true hvis constructor feiler
-		
-		// init basert på noder og nabofunskjon
-		void init(std::set<T> nodes, int (*neighboor) (T a, T b));
 		
 	public:
 
@@ -91,7 +90,7 @@ class Dijkstra {
 		// constructorer
 		Dijkstra(std::set<T> nodes,	// nodeliste + nabofunksjon 
 				int (*neighboor)(T a, T b));
-		Dijkstra(std::set<T> nodes, 	// nodeliste + nabomatrise
+		Dijkstra(std::vector<T> nodeVector, 	// nodeliste + nabomatrise
 				std::vector<std::vector<int>> adjacencyMatrix);
 
 		// funksjoner
@@ -99,6 +98,7 @@ class Dijkstra {
 		// Samme som over ^ , men lagrer besøkte nodenavn i set
 		std::vector<T> findPathSaveVisited(T start, T end, 
 				std::set<T> &visited);
+		bool isBroken() const;			// getter for 'broken'
 };
 
 // Globale funksjoner:
@@ -112,7 +112,7 @@ Dijkstra<std::pair<int, int>> gridToDijkstra(std::vector<
 
 // Lager et nytt objekt basert på en liste med nodenavn og en funskjon som kan
 //  brukes for å sjekke hvilke av nodene i listen som er naboer. Kantliste blir
-//  basert på denne informasjonen. Bruker init
+//  basert på denne informasjonen.
 template<typename T>
 Dijkstra<T>::Dijkstra(std::set<T> nodes, 
 		int (*neighboor)(T a, T b)) {
@@ -123,45 +123,6 @@ Dijkstra<T>::Dijkstra(std::set<T> nodes,
 		return;
 	}
 	
-	init(nodes, neighboor);
-}
-
-// Lager et nytt objekt basert på en liste med nodenavn og en nabomatrise. 
-//	Matrisen må være (antall nodenavn) x (antall nodenavn)!!!!!
-template<typename T>
-Dijkstra<T>::Dijkstra(std::set<T> nodes, 
-		std::vector<std::vector<int>> adjacencyMatrix) {
-
-	// Sjekk om infoen er ugyldig. Isåfall: gi opp (BRUKER SHORT-CIRCUIT
-	if (nodes.empty() || adjacencyMatrix.empty() ||		// EGENSKAPEN TIL
-			adjacencyMatrix[0].empty() ||				// || -OPERATOREN
-			(nodes.size() != adjacencyMatrix.size()) || 
-			(nodes.size() != adjacencyMatrix[0].size())) {
-		broken = true;
-		return;
-	}
-
-	this->nodes = nodes;	// lagrer nodenavnene i this->nodes
-	
-	// Går igjennom nabomatrisa og lager advec basert på den
-	for (std::vector<std::vector<int>>::size_type i = 0; 
-			i < adjacencyMatrix.size(); ++i) {
-		for (std::vector<int>::size_type j = 0; j < adjacencyMatrix[i].size();
-				++j) {
-			if (adjacencyMatrix[i][j])
-				advec[nodes[j]].insert(std::pair<T, int>(nodes[i], 
-						adjacencyMatrix[i][j]));
-		}
-	}
-}
-
-//--------------------------------FUNKSJONER------------------------------------
-
-// Lager kantlista basert på en vektor av nodenavn og en funksjon for å sjekke
-//  om to noder er naboer
-template<typename T>
-void Dijkstra<T>::init(std::set<T> nodes, int (*neighboor)(T a, T b)) {
-			
 	this->nodes = nodes;	// lagrer nodenavnene i this->nodes
 	
 	for (T a : nodes)		// loop gjennom nodes x nodes
@@ -169,6 +130,39 @@ void Dijkstra<T>::init(std::set<T> nodes, int (*neighboor)(T a, T b)) {
 			if (neighboor(a, b))	// (b, (a->b)-vekt) i a 
 				advec[a].emplace(b, neighboor(a, b));
 }
+
+// Lager et nytt objekt basert på en liste med nodenavn og en nabomatrise. 
+//	Matrisen må være (antall nodenavn) x (antall nodenavn)!!!!!
+template<typename T>
+Dijkstra<T>::Dijkstra(std::vector<T> nodeVector, 
+		std::vector<std::vector<int>> adjacencyMatrix) {
+
+	// Sjekk om infoen er ugyldig. Isåfall: gi opp (BRUKER SHORT-CIRCUIT
+	if (nodeVector.empty() || adjacencyMatrix.empty() ||	// EGENSKAPEN TIL
+			adjacencyMatrix[0].empty() ||					// || -OPERATOREN
+			(nodeVector.size() != adjacencyMatrix.size()) || 
+			(nodeVector.size() != adjacencyMatrix[0].size())) {
+		broken = true;
+		return;
+	}
+
+	for (T node : nodeVector)		// Lagrer nodenavn fra nodeVector i nodes
+		nodes.emplace(node);
+
+	
+	// Går igjennom nabomatrisa og lager advec basert på den
+	for (std::vector<std::vector<int>>::size_type i = 0; 
+			i < adjacencyMatrix.size(); ++i) {
+		for (std::vector<int>::size_type j = 0; j < adjacencyMatrix[i].size();
+				++j) {
+			if (adjacencyMatrix[i][j])
+				advec[nodeVector[j]].insert(std::pair<T, int>(nodeVector[i], 
+						adjacencyMatrix[i][j]));
+		}
+	}
+}
+
+//--------------------------------FUNKSJONER------------------------------------
 
 // Utfører Dijkstras algoritme på advec med (start, end). Returnerer stien som 
 //  en vektor av nodenavn hvis denne finnes, eller en tom sti dersom ingen stier
@@ -344,6 +338,11 @@ std::vector<T> Dijkstra<T>::findPathSaveVisited(T start, T end,
 		
 		
 	return rpath; // returner sti
+}
+
+template <typename T>
+bool Dijkstra<T>::isBroken() const {
+	return broken;
 }
 
 //------------------------------GLOBALE FUNKSJONER------------------------------
