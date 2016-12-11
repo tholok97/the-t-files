@@ -99,6 +99,9 @@ class Dijkstra {
 		std::vector<T> findPathSaveVisited(T start, T end, 
 				std::set<T> &visited);
 		bool isBroken() const;			// getter for 'broken'
+
+		// Overloaded conversion to bool, til bruk i conditions
+		explicit operator bool() const { return !broken; }
 };
 
 // Globale funksjoner:
