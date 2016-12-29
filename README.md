@@ -7,7 +7,7 @@
 
 <h3><a href="/CA.h?ts=4">CA.h</a></h3>
 <p>Lar deg kjøre simuleringer av et elementært cellular-automata-system med et 
-		gitt regelsett. </p>
+		gitt regelsett </p>
 		
 <h3><a href="/CA_2.h?ts=4">CA_2.h</a></h3>
 <p>Samme som over, men er templetert og bruker std::bitset istedenfor 
@@ -17,7 +17,7 @@
 <h3><a href="/aoc11.cpp?ts=4">aoc11.cpp</a></h3>
 <p>Min løsning til Advent of Code 2016 
 		<a href="http://adventofcode.com/2016/day/11">dag 11</a>. Løser begge 
-		partene på litt over ett sekund. Ikke kommentert.</p>
+		partene på litt over ett sekund. Ikke kommentert</p>
 
 <h3><a href="/Screen.h?ts=4">Screen.h</a></h3>
 <p>Implementerer en slags tegneflate i 
@@ -35,7 +35,7 @@
 		på github så jeg får testet ut siden :)
 
 <b>NB3!</b> Klassene mine både deklareres og defineres i header-filen sin. Jeg 
-		jørs på det.
+		jørs på det
 
 </br></br></br></br></br></br>
 923
