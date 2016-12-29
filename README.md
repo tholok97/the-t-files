@@ -14,7 +14,7 @@
 		std::vector. (SPEED AND POWER!! 
 		https://cdn.meme.am/instances/500x/47600347.jpg)</p>
 
-<h3><a href="/aoc11.cpp?ts=4">Advent of Code 2016 dag 11</a></h3>
+<h3><a href="/aoc11.cpp?ts=4">aoc11.cpp</a></h3>
 <p>Min løsning til Advent of Code 2016 
 		<a href="http://adventofcode.com/2016/day/11">dag 11</a>. Løser begge 
 		partene på litt over ett sekund. Ikke kommentert.</p>
