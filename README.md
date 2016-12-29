@@ -15,7 +15,8 @@
 		https://cdn.meme.am/instances/500x/47600347.jpg)</p>
 
 <h3><a href="/aoc11.cpp?ts=4">Advent of Code 2016 dag 11</a></h3>
-<p>Min løsning til Advent of Code 2016 dag 11. Ikke kommentert.</p>
+<p>Min løsning til Advent of Code 2016 dag 11. Løser begge partene på litt 
+		over ett sekund. Ikke kommentert.</p>
 
 <h3><a href="/Screen.h?ts=4">Screen.h</a></h3>
 <p>Implementerer en slags tegneflate i 
