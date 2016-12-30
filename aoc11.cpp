@@ -142,7 +142,6 @@ bool isGoal(const State &s) {
 }
 
 int search(const State &start) {
-	
 	queue<State> q;
 	unordered_map<string, int> dist;
 
@@ -168,7 +167,6 @@ int search(const State &start) {
 }
 
 int main() {
-
 	State initial({ {0,0}, {1,2}, {1,2}, {1,2}, {1,2} }, 0);
 	cout << "Answer to part 1: " << search(initial) << endl;
 	
