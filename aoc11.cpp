@@ -149,7 +149,10 @@ int search(const State &start) {
 	dist[start.getString()] = 0;
 
 	State current(start);
-	while (!q.empty() && !isGoal(current)) {
+	while (!isGoal(current)) {	
+		if (q.empty())
+			return -1;
+		
 		current = q.front();
 		q.pop();
 
