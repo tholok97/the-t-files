@@ -48,8 +48,17 @@ template<typename T, size_t n, size_t m, size_t x>
 Matrix<T, n, m> operator*(const Matrix<T, n, x>& lhs,
 		const Matrix<T, x, m>& rhs);
 
-template<typename t, size_t n, size_t m>
-std::ostream& print_matrix(const Matrix<t, n, m>& ma, 
+template<typename T, size_t n, size_t m>
+Matrix<T, n, m> operator*(const Matrix<T, n, m>& ma, T scalar);
+
+template<typename T, size_t n, size_t m>
+Matrix<T, n, m> operator*(T scalar, const Matrix<T, n, m>& ma);
+
+template<typename T, size_t n, size_t m>
+Matrix<T, m, n> transposed(const Matrix<T, n, m>& ma);
+
+template<typename T, size_t n, size_t m>
+std::ostream& print_matrix(const Matrix<T, n, m>& ma, 
 		std::ostream& os = std::cout);
 
 //---------------------------CLASS DEFINITION-----------------------------------
@@ -64,6 +73,9 @@ class Matrix {
 		Matrix(Array_2d a_2d): mat(a_2d) { }
 		T& at(const size_t r, const size_t c);
 		T at(const size_t r, const size_t c) const;
+		Matrix<T, n, m>& operator+=(const Matrix& ma);
+		Matrix<T, n, m>& operator-=(const Matrix& ma);
+		Matrix<T, n, m>& operator*=(T scalar);
 };
 
 //------------------------------DEFINITIONS-------------------------------------
@@ -76,6 +88,24 @@ T& Matrix<T, n, m>::at(const size_t r, const size_t c) {
 template<typename T, size_t n, size_t m>
 T Matrix<T, n, m>::at(const size_t r, const size_t c) const {
 	return mat.at(r).at(c);
+}
+
+template<typename T, size_t n, size_t m>
+Matrix<T, n, m>& Matrix<T, n, m>::operator+=(const Matrix& ma) {
+	*this = *this + ma;
+	return *this;
+}
+
+template<typename T, size_t n, size_t m>
+Matrix<T, n, m>& Matrix<T, n, m>::operator-=(const Matrix& ma) {
+	*this = *this - ma;
+	return *this;
+}
+
+template<typename T, size_t n, size_t m>
+Matrix<T, n, m>& Matrix<T, n, m>::operator*=(T scalar) {
+	*this = *this * scalar;
+	return *this;
 }
 
 template<typename T, size_t n, size_t m>
@@ -134,8 +164,33 @@ Matrix<T, n, m> operator*(const Matrix<T, n, x>& lhs,
 	return ret;	
 }
 
-template<typename t, size_t n, size_t m>
-std::ostream& print_matrix(const Matrix<t, n, m>& ma, std::ostream& os)  {	
+template<typename T, size_t n, size_t m>
+Matrix<T, n, m> operator*(const Matrix<T, n, m>& ma, T scalar) {
+	Matrix<T, n, m> ret;
+	for (size_t r = 0; r < n; ++r) {
+		for (size_t c = 0; c < m; ++c) {
+			ret.at(r, c) = ma.at(r, c) * scalar;
+		}
+	}
+	return ret;
+}
+
+template<typename T, size_t n, size_t m>
+Matrix<T, n, m> operator*(T scalar, const Matrix<T, n, m>& ma) {
+	return ma * scalar;
+}
+
+template<typename T, size_t n, size_t m>
+Matrix<T, m, n> transposed(const Matrix<T, n, m>& ma) {
+	Matrix<T, m, n> ret;
+	for (size_t r = 0; r < m; ++r)
+		for (size_t c = 0; c < n; ++c)
+			ret.at(r, c) = ma.at(c, r);
+	return ret;
+}
+
+template<typename T, size_t n, size_t m>
+std::ostream& print_matrix(const Matrix<T, n, m>& ma, std::ostream& os)  {	
 	for (size_t r = 0; r < n; ++r) {
 		for (size_t c = 0; c < m; ++c)
 			std::cout << ma.at(r, c) << '\t';
