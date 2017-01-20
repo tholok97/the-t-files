@@ -2,6 +2,9 @@
 
 </br>
 
+<h3><a href="/Matrix.h?ts=4">Matrix.h</a></h3>
+<p>Implementasjon av en generisk to-dimensjonell matrise. (Ikke kommentert)</p>
+
 <h3><a href="/Dijkstra.h?ts=4">Dijkstra.h</a></h3>
 <p>Lar deg finne kjappeste sti i et nettverk</p>
 
@@ -29,7 +32,10 @@
 
 </br></br>
 
-<b>NB!</b> Bruk hyperlinkene! Koden min er skrevet med tabspace satt til 4, men av en eller annen grunn vises Github-kode i utgangspunktet med tabspace på 8... Hyperlinkene omgår dette ved å legge til "?ts=4" i linken :)
+<b>NB!</b> Bruk hyperlinkene! Koden min er skrevet med tabspace satt til 4, 
+		men av en eller annen grunn vises Github-kode i utgangspunktet med 
+		tabspace på 8... Hyperlinkene omgår dette ved å legge til "?ts=4" i 
+		linken :)
 
 <b>NB2!</b> Ingen av disse prosjektene er på langt nær ferdige. Ligger kun
 		på github så jeg får testet ut siden :)
