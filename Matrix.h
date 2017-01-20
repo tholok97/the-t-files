@@ -69,12 +69,12 @@ class Matrix {
 //------------------------------DEFINITIONS-------------------------------------
 
 template<typename T, size_t n, size_t m>
-T& Matrix<T, n, m>::at(size_t r, size_t c) {
+T& Matrix<T, n, m>::at(const size_t r, const size_t c) {
 	return mat.at(r).at(c);
 }
 
 template<typename T, size_t n, size_t m>
-T Matrix<T, n, m>::at(size_t r, size_t c) const {
+T Matrix<T, n, m>::at(const size_t r, const size_t c) const {
 	return mat.at(r).at(c);
 }
 
