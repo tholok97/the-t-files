@@ -39,58 +39,59 @@
 #define MATRIX_HEADER
 
 #include <iostream>		// cout, endl
+#include <cstddef>		// size_t
 #include <array>		// array
 
 //---------------------------DECLARATIONS---------------------------------------
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 class Matrix;
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 std::ostream& operator<<(std::ostream& os, const Matrix<T, n, m>& ma);
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 bool operator==(const Matrix<T, n, m>& lhs, 
 		const Matrix<T, n, m>& rhs);
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 bool operator!=(const Matrix<T, n, m>& lhs, 
 		const Matrix<T, n, m>& rhs);
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator+(const Matrix<T, n, m>& lhs, 
 		const Matrix<T, n, m>& rhs);
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator-(const Matrix<T, n, m>& lhs, 
 		const Matrix<T, n, m>& rhs);
 
-template<typename T, size_t n, size_t m, size_t x>
+template<typename T, std::size_t n, std::size_t m, std::size_t x>
 Matrix<T, n, m> operator*(const Matrix<T, n, x>& lhs,
 		const Matrix<T, x, m>& rhs);
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator*(const Matrix<T, n, m>& ma, T scalar);
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator*(T scalar, const Matrix<T, n, m>& ma);
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator/(const Matrix<T, n, m>& ma, T scalar);
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator/(T scalar, const Matrix<T, n, m>& ma);
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, m, n> transposed(const Matrix<T, n, m>& ma);
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 std::ostream& print_matrix(const Matrix<T, n, m>& ma, 
 		std::ostream& os = std::cout);
 
 //---------------------------CLASS DEFINITION-----------------------------------
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 class Matrix {
 	typedef std::array<std::array<T, m>, n> Array_2d;
 	friend bool operator== <T, n, m>(const Matrix& lhs, const Matrix& rhs);
@@ -100,8 +101,8 @@ class Matrix {
 	public:
 		Matrix(): mat({}) { }
 		Matrix(Array_2d a_2d): mat(a_2d) { }
-		T& at(const size_t r, const size_t c);
-		T at(const size_t r, const size_t c) const;
+		T& at(const std::size_t r, const std::size_t c);
+		T at(const std::size_t r, const std::size_t c) const;
 		Matrix<T, n, m>& operator+=(const Matrix& ma);
 		Matrix<T, n, m>& operator-=(const Matrix& ma);
 		Matrix<T, n, m>& operator*=(T scalar);
@@ -110,54 +111,54 @@ class Matrix {
 
 //------------------------------DEFINITIONS-------------------------------------
 
-template<typename T, size_t n, size_t m>
-T& Matrix<T, n, m>::at(const size_t r, const size_t c) {
+template<typename T, std::size_t n, std::size_t m>
+T& Matrix<T, n, m>::at(const std::size_t r, const std::size_t c) {
 	return mat.at(r).at(c);
 }
 
-template<typename T, size_t n, size_t m>
-T Matrix<T, n, m>::at(const size_t r, const size_t c) const {
+template<typename T, std::size_t n, std::size_t m>
+T Matrix<T, n, m>::at(const std::size_t r, const std::size_t c) const {
 	return mat.at(r).at(c);
 }
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m>& Matrix<T, n, m>::operator+=(const Matrix& ma) {
-	for (size_t r = 0; r < n; ++r)
-		for (size_t c = 0; c < m; ++c)
+	for (std::size_t r = 0; r < n; ++r)
+		for (std::size_t c = 0; c < m; ++c)
 			mat.at(r).at(c) += ma.at(r, c);
 	return *this;
 }
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m>& Matrix<T, n, m>::operator-=(const Matrix& ma) {
-	for (size_t r = 0; r < n; ++r)
-		for (size_t c = 0; c < m; ++c)
+	for (std::size_t r = 0; r < n; ++r)
+		for (std::size_t c = 0; c < m; ++c)
 			mat.at(r).at(c) -= ma.at(r, c);
 	return *this;
 }
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m>& Matrix<T, n, m>::operator*=(T scalar) {
-	for (size_t r = 0; r < n; ++r)
-		for (size_t c = 0; c < m; ++c)
+	for (std::size_t r = 0; r < n; ++r)
+		for (std::size_t c = 0; c < m; ++c)
 			mat.at(r).at(c) = mat.at(r).at(c) * scalar;
 	return *this;
 }
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m>& Matrix<T, n, m>::operator/=(T scalar) {
-	for (size_t r = 0; r < n; ++r)
-		for (size_t c = 0; c < m; ++c)
+	for (std::size_t r = 0; r < n; ++r)
+		for (std::size_t c = 0; c < m; ++c)
 			mat.at(r).at(c) = mat.at(r).at(c) / scalar;
 	return *this;
 }
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 std::ostream& operator<<(std::ostream& os, const Matrix<T, n, m>& ma) {
 	std::cout << '{';
-	for (size_t r = 0; r < n; ++r) {
+	for (std::size_t r = 0; r < n; ++r) {
 		std::cout << '{';
-		for (size_t c = 0; c < m; ++c) {
+		for (std::size_t c = 0; c < m; ++c) {
 			std::cout << ma.at(r, c);
 			if (c+1 < m)
 				std::cout << ", ";
@@ -170,19 +171,19 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T, n, m>& ma) {
 	return os;
 }
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 bool operator==(const Matrix<T, n, m>& lhs, 
 		const Matrix<T, n, m>& rhs) {
 	return lhs.mat == rhs.mat;
 }
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 bool operator!=(const Matrix<T, n, m>& lhs, 
 		const Matrix<T, n, m>& rhs) {
 	return !(lhs.mat == rhs.mat);
 }
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator+(const Matrix<T, n, m>& lhs, 
 		const Matrix<T, n, m>& rhs) {
 	Matrix<T, n, m> ret = lhs;
@@ -190,7 +191,7 @@ Matrix<T, n, m> operator+(const Matrix<T, n, m>& lhs,
 	return ret;
 }
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator-(const Matrix<T, n, m>& lhs, 
 		const Matrix<T, n, m>& rhs) {
 	Matrix<T, n, m> ret = lhs;
@@ -198,14 +199,14 @@ Matrix<T, n, m> operator-(const Matrix<T, n, m>& lhs,
 	return ret;
 }
 
-template<typename T, size_t n, size_t m, size_t x>
+template<typename T, std::size_t n, std::size_t m, std::size_t x>
 Matrix<T, n, m> operator*(const Matrix<T, n, x>& lhs,
 		const Matrix<T, x, m>& rhs) {
 	Matrix<T, n, m> ret;
-	for (size_t r = 0; r < n; ++r) {
-		for (size_t c = 0; c < m; ++c) {
+	for (std::size_t r = 0; r < n; ++r) {
+		for (std::size_t c = 0; c < m; ++c) {
 			T value = 0;
-			for (size_t i = 0; i < x; ++i) {
+			for (std::size_t i = 0; i < x; ++i) {
 				value += lhs.at(r, i) * rhs.at(i, c);
 			}
 			ret.at(r, c) = value;
@@ -214,47 +215,47 @@ Matrix<T, n, m> operator*(const Matrix<T, n, x>& lhs,
 	return ret;	
 }
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator*(const Matrix<T, n, m>& ma, T scalar) {
 	Matrix<T, n, m> ret = ma;
 	ret *= scalar;
 	return ret;
 }
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator*(T scalar, const Matrix<T, n, m>& ma) {
 	Matrix<T, n, m> ret = ma;
 	ret *= scalar;
 	return ret;
 }
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator/(const Matrix<T, n, m>& ma, T scalar) {
 	Matrix<T, n, m> ret = ma;
 	ret /= scalar;
 	return ret;
 }
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator/(T scalar, const Matrix<T, n, m>& ma) {
 	Matrix<T, n, m> ret = ma;
 	ret /= scalar;
 	return ret;
 }
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 Matrix<T, m, n> transposed(const Matrix<T, n, m>& ma) {
 	Matrix<T, m, n> ret;
-	for (size_t r = 0; r < m; ++r)
-		for (size_t c = 0; c < n; ++c)
+	for (std::size_t r = 0; r < m; ++r)
+		for (std::size_t c = 0; c < n; ++c)
 			ret.at(r, c) = ma.at(c, r);
 	return ret;
 }
 
-template<typename T, size_t n, size_t m>
+template<typename T, std::size_t n, std::size_t m>
 std::ostream& print_matrix(const Matrix<T, n, m>& ma, std::ostream& os)  {	
-	for (size_t r = 0; r < n; ++r) {
-		for (size_t c = 0; c < m; ++c)
+	for (std::size_t r = 0; r < n; ++r) {
+		for (std::size_t c = 0; c < m; ++c)
 			std::cout << ma.at(r, c) << '\t';
 		std::cout << std::endl;
 	}
