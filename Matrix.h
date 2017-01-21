@@ -2,6 +2,19 @@
  * Matrix.h
  * Beskrivelse: Generisk matrise som støtter addisjon, substraksjon og 
 	multiplikasjon.
+ * Støtter:
+	+=
+	-=
+	*= (skalar)
+	/= (skalar)
+	==
+	!=
+	+
+	-
+	* (matrise)
+	* (skalar)
+	/ (skalar)
+	<<
  * <eksempelbruk1>
 
 	Matrix<int, 3, 2> m1({{
@@ -37,6 +50,14 @@ template<typename T, size_t n, size_t m>
 std::ostream& operator<<(std::ostream& os, const Matrix<T, n, m>& ma);
 
 template<typename T, size_t n, size_t m>
+bool operator==(const Matrix<T, n, m>& lhs, 
+		const Matrix<T, n, m>& rhs);
+
+template<typename T, size_t n, size_t m>
+bool operator!=(const Matrix<T, n, m>& lhs, 
+		const Matrix<T, n, m>& rhs);
+
+template<typename T, size_t n, size_t m>
 Matrix<T, n, m> operator+(const Matrix<T, n, m>& lhs, 
 		const Matrix<T, n, m>& rhs);
 
@@ -55,6 +76,12 @@ template<typename T, size_t n, size_t m>
 Matrix<T, n, m> operator*(T scalar, const Matrix<T, n, m>& ma);
 
 template<typename T, size_t n, size_t m>
+Matrix<T, n, m> operator/(const Matrix<T, n, m>& ma, T scalar);
+
+template<typename T, size_t n, size_t m>
+Matrix<T, n, m> operator/(T scalar, const Matrix<T, n, m>& ma);
+
+template<typename T, size_t n, size_t m>
 Matrix<T, m, n> transposed(const Matrix<T, n, m>& ma);
 
 template<typename T, size_t n, size_t m>
@@ -66,6 +93,8 @@ std::ostream& print_matrix(const Matrix<T, n, m>& ma,
 template<typename T, size_t n, size_t m>
 class Matrix {
 	typedef std::array<std::array<T, m>, n> Array_2d;
+	friend bool operator== <T, n, m>(const Matrix& lhs, const Matrix& rhs);
+	friend bool operator!= <T, n, m>(const Matrix& lhs, const Matrix& rhs);
 	private:
 		Array_2d mat;
 	public:
@@ -76,6 +105,7 @@ class Matrix {
 		Matrix<T, n, m>& operator+=(const Matrix& ma);
 		Matrix<T, n, m>& operator-=(const Matrix& ma);
 		Matrix<T, n, m>& operator*=(T scalar);
+		Matrix<T, n, m>& operator/=(T scalar);
 };
 
 //------------------------------DEFINITIONS-------------------------------------
@@ -92,19 +122,33 @@ T Matrix<T, n, m>::at(const size_t r, const size_t c) const {
 
 template<typename T, size_t n, size_t m>
 Matrix<T, n, m>& Matrix<T, n, m>::operator+=(const Matrix& ma) {
-	*this = *this + ma;
+	for (size_t r = 0; r < n; ++r)
+		for (size_t c = 0; c < m; ++c)
+			mat.at(r).at(c) += ma.at(r, c);
 	return *this;
 }
 
 template<typename T, size_t n, size_t m>
 Matrix<T, n, m>& Matrix<T, n, m>::operator-=(const Matrix& ma) {
-	*this = *this - ma;
+	for (size_t r = 0; r < n; ++r)
+		for (size_t c = 0; c < m; ++c)
+			mat.at(r).at(c) -= ma.at(r, c);
 	return *this;
 }
 
 template<typename T, size_t n, size_t m>
 Matrix<T, n, m>& Matrix<T, n, m>::operator*=(T scalar) {
-	*this = *this * scalar;
+	for (size_t r = 0; r < n; ++r)
+		for (size_t c = 0; c < m; ++c)
+			mat.at(r).at(c) = mat.at(r).at(c) * scalar;
+	return *this;
+}
+
+template<typename T, size_t n, size_t m>
+Matrix<T, n, m>& Matrix<T, n, m>::operator/=(T scalar) {
+	for (size_t r = 0; r < n; ++r)
+		for (size_t c = 0; c < m; ++c)
+			mat.at(r).at(c) = mat.at(r).at(c) / scalar;
 	return *this;
 }
 
@@ -127,24 +171,30 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T, n, m>& ma) {
 }
 
 template<typename T, size_t n, size_t m>
+bool operator==(const Matrix<T, n, m>& lhs, 
+		const Matrix<T, n, m>& rhs) {
+	return lhs.mat == rhs.mat;
+}
+
+template<typename T, size_t n, size_t m>
+bool operator!=(const Matrix<T, n, m>& lhs, 
+		const Matrix<T, n, m>& rhs) {
+	return !(lhs.mat == rhs.mat);
+}
+
+template<typename T, size_t n, size_t m>
 Matrix<T, n, m> operator+(const Matrix<T, n, m>& lhs, 
 		const Matrix<T, n, m>& rhs) {
-	Matrix<T, n, m> ret;
-	for (size_t r = 0; r < n; ++r)
-		for (size_t c = 0; c < m; ++c)
-			ret.at(r, c) = lhs.at(r, c) + rhs.at(r, c);
-
+	Matrix<T, n, m> ret = lhs;
+	ret += rhs;
 	return ret;
 }
 
 template<typename T, size_t n, size_t m>
 Matrix<T, n, m> operator-(const Matrix<T, n, m>& lhs, 
 		const Matrix<T, n, m>& rhs) {
-	Matrix<T, n, m> ret;
-	for (size_t r = 0; r < n; ++r)
-		for (size_t c = 0; c < m; ++c)
-			ret.at(r, c) = lhs.at(r, c) - rhs.at(r, c);
-
+	Matrix<T, n, m> ret = lhs;
+	ret -= rhs;
 	return ret;
 }
 
@@ -166,18 +216,30 @@ Matrix<T, n, m> operator*(const Matrix<T, n, x>& lhs,
 
 template<typename T, size_t n, size_t m>
 Matrix<T, n, m> operator*(const Matrix<T, n, m>& ma, T scalar) {
-	Matrix<T, n, m> ret;
-	for (size_t r = 0; r < n; ++r) {
-		for (size_t c = 0; c < m; ++c) {
-			ret.at(r, c) = ma.at(r, c) * scalar;
-		}
-	}
+	Matrix<T, n, m> ret = ma;
+	ret *= scalar;
 	return ret;
 }
 
 template<typename T, size_t n, size_t m>
 Matrix<T, n, m> operator*(T scalar, const Matrix<T, n, m>& ma) {
-	return ma * scalar;
+	Matrix<T, n, m> ret = ma;
+	ret *= scalar;
+	return ret;
+}
+
+template<typename T, size_t n, size_t m>
+Matrix<T, n, m> operator/(const Matrix<T, n, m>& ma, T scalar) {
+	Matrix<T, n, m> ret = ma;
+	ret /= scalar;
+	return ret;
+}
+
+template<typename T, size_t n, size_t m>
+Matrix<T, n, m> operator/(T scalar, const Matrix<T, n, m>& ma) {
+	Matrix<T, n, m> ret = ma;
+	ret /= scalar;
+	return ret;
 }
 
 template<typename T, size_t n, size_t m>
