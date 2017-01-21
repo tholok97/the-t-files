@@ -206,9 +206,8 @@ Matrix<T, n, m> operator*(const Matrix<T, n, x>& lhs,
 	for (std::size_t r = 0; r < n; ++r) {
 		for (std::size_t c = 0; c < m; ++c) {
 			T value = 0;
-			for (std::size_t i = 0; i < x; ++i) {
+			for (std::size_t i = 0; i < x; ++i)
 				value += lhs.at(r, i) * rhs.at(i, c);
-			}
 			ret.at(r, c) = value;
 		}
 	}
