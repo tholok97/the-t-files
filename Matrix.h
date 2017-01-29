@@ -94,7 +94,7 @@ class Matrix {
 		Array_2d mat;
 	public:
 		Matrix(): mat{} { }
-		Matrix(std::initializer_list<std::initializer_list<T>> outer);
+		explicit Matrix(std::initializer_list<std::initializer_list<T>> outer);
 		T& at(const std::size_t r, const std::size_t c);
 		T at(const std::size_t r, const std::size_t c) const;
 		Matrix<T, n, m>& operator+=(const Matrix& ma);
