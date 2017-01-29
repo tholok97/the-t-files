@@ -1,5 +1,6 @@
 /*
  * SvgWriter.h
+ * Laget av: Thomas Løkkeborg
  * Beskrivelse: SvgWriter lar deg tegne tegninger eksportere dem til svg filer.
 */
 

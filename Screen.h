@@ -1,5 +1,6 @@
 /*
  * Screen.h
+ * Laget av: Thomas Løkkeborg
  * Beskrivelse: Implementasjon av en slags tegneflate i kommandolinjen. Lar deg
 	tegne dotter, linjer og firkanter.
  * Der input er valgfritt gjelder disse defaultverdiene:

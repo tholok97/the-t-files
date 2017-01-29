@@ -1,32 +1,23 @@
 /*
  * Matrix.h
- * Beskrivelse: Generisk matrise som støtter addisjon, substraksjon og 
-	multiplikasjon.
+ * Laget av: Thomas Løkkeborg
+ * Beskrivelse: Generisk matrise som støtter mange operasjoner
  * Støtter:
-	+=
-	-=
-	*= (skalar)
-	/= (skalar)
-	==
-	!=
-	+
-	-
-	* (matrise)
-	* (skalar)
-	/ (skalar)
-	<<
+	+=				-=				*= (skalar)			/= (skalar)		
+	==				!=				+					-				
+	* (matrise)		* (skalar)		/ (skalar)			<<
  * <eksempelbruk1>
 
-	Matrix<int, 3, 2> m1({{
+	Matrix<int, 3, 2> m1{
 		{1, 2},
 		{0, 1},
 		{3, 9}
-	}});
+	};
 
-	Matrix<int, 2, 4> m2({{
+	Matrix<int, 2, 4> m2{
 		{1,0,6,2},
 		{2,1,0,1}
-	}});
+	};
 
 	std::cout << "m1 + m1: " << (m1 + m1) << std::endl;
 	std::cout << "m1 * m2:\n";
@@ -38,9 +29,12 @@
 #ifndef MATRIX_HEADER
 #define MATRIX_HEADER
 
-#include <iostream>		// cout, endl
-#include <cstddef>		// size_t
-#include <array>		// array
+#include <initializer_list>	// initializer list
+#include <stdexcept>		// out_of_range
+#include <iostream>			// cout, endl
+#include <cstddef>			// size_t
+#include <string>			// to_string
+#include <array>			// array
 
 //---------------------------DECLARATIONS---------------------------------------
 
@@ -99,8 +93,8 @@ class Matrix {
 	private:
 		Array_2d mat;
 	public:
-		Matrix(): mat({}) { }
-		Matrix(Array_2d a_2d): mat(a_2d) { }
+		Matrix(): mat{} { }
+		Matrix(std::initializer_list<std::initializer_list<T>> outer);
 		T& at(const std::size_t r, const std::size_t c);
 		T at(const std::size_t r, const std::size_t c) const;
 		Matrix<T, n, m>& operator+=(const Matrix& ma);
@@ -110,6 +104,26 @@ class Matrix {
 };
 
 //------------------------------DEFINITIONS-------------------------------------
+
+template<typename T, std::size_t n, std::size_t m>
+Matrix<T, n, m>::Matrix(
+		std::initializer_list<std::initializer_list<T>> outer): mat{} {
+	size_t i = 0, j = 0;
+	if (outer.size() > mat.size())
+		throw std::out_of_range("MATRIX INIT ERROR: too many "
+				"initializers for outer");
+	for (std::initializer_list<T> inner : outer) {
+		if (inner.size() > mat[i].size())
+			throw std::out_of_range("MATRIX INIT ERROR: too many "
+					"initializers for inner at i = " + std::to_string(i));
+		for (T value : inner) {
+			mat[i][j] = value;
+			++j;
+		}
+		j = 0;
+		++i;
+	}
+}
 
 template<typename T, std::size_t n, std::size_t m>
 T& Matrix<T, n, m>::at(const std::size_t r, const std::size_t c) {

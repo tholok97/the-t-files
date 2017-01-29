@@ -1,5 +1,6 @@
 /*
  * CA.h
+ * Laget av: Thomas Løkkeborg
  * Beskrivelse: CA er en implementasjon av et elementært cellular automata 
 	system.
  * Der input er valgfritt brukes disse defaultverdiene:

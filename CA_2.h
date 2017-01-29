@@ -1,5 +1,6 @@
 /*
  * CA_2.h
+ * Laget av: Thomas Løkkeborg
  * Beskrivelse: CA_2 er en implementasjon av et elementært cellular-automata-
 	system. Bruker bitset til å representere systemet.
  * Defaultverdier:

@@ -1,5 +1,6 @@
 /*
  * Dijkstra.h
+ * Laget av: Thomas Løkkeborg
  * Beskrivelse: Lar deg finne kjappeste rute gjennom et nettverk ved Dijkstras-
 	algoritme. Klassen er templetert for å støtte mange typer nodenavn. Et 
 	Dijkstra<string> objekt bruker for.eks. string-navn som nodenavn og et 
