@@ -3,7 +3,7 @@
 </br>
 
 <h3><a href="/Matrix.h?ts=4">Matrix.h</a></h3>
-<p>Implementasjon av en generisk to-dimensjonell matrise. (Ikke kommentert)</p>
+<p>Implementasjon av en generisk matrise. (Ikke kommentert)</p>
 
 <h3><a href="/Dijkstra.h?ts=4">Dijkstra.h</a></h3>
 <p>Lar deg finne kjappeste sti i et nettverk</p>
