@@ -108,10 +108,10 @@ class Matrix {
 template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m>::Matrix(
 		std::initializer_list<std::initializer_list<T>> outer): mat{} {
-	size_t i = 0, j = 0;
 	if (outer.size() > mat.size())
 		throw std::out_of_range("MATRIX INIT ERROR: too many "
 				"initializers for outer");
+	size_t i = 0, j = 0;
 	for (std::initializer_list<T> inner : outer) {
 		if (inner.size() > mat[i].size())
 			throw std::out_of_range("MATRIX INIT ERROR: too many "
