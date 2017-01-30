@@ -6,6 +6,7 @@
 	+=				-=				*= (skalar)			/= (skalar)		
 	==				!=				+					-				
 	* (matrise)		* (skalar)		/ (skalar)			<<
+	^
  * <eksempelbruk1>
 
 	Matrix<int, 3, 2> m1{
@@ -75,6 +76,9 @@ Matrix<T, n, m> operator/(const Matrix<T, n, m>& ma, T scalar);
 
 template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator/(T scalar, const Matrix<T, n, m>& ma);
+
+template<typename T, std::size_t n>
+Matrix<T, n, n> operator^(const Matrix<T, n, n>& ma, std::size_t power);
 
 template<typename T, std::size_t n, std::size_t m>
 Matrix<T, m, n> transposed(const Matrix<T, n, m>& ma);
@@ -253,6 +257,14 @@ template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator/(T scalar, const Matrix<T, n, m>& ma) {
 	Matrix<T, n, m> ret = ma;
 	ret /= scalar;
+	return ret;
+}
+
+template<typename T, std::size_t n>
+Matrix<T, n, n> operator^(const Matrix<T, n, n>& ma, std::size_t power) {
+	Matrix<T, n, n> ret(ma);
+	for (size_t i = 0; i < power-1; ++i)
+		ret = ret * ma;
 	return ret;
 }
 
