@@ -272,7 +272,7 @@ template<typename T, std::size_t n>
 Matrix<T, n, n> operator^(const Matrix<T, n, n>& ma, std::size_t power) {
 	Matrix<T, n, n> ret(ma);
 	if (power > 0) {
-		for (size_t i = 0; i < power-1; ++i)
+		for (std::size_t i = 0; i < power-1; ++i)
 			ret = ret * ma;
 	} else {
 		return makeIdentity<T, n>();
@@ -292,30 +292,30 @@ Matrix<T, m, n> transposed(const Matrix<T, n, m>& ma) {
 template<typename T, std::size_t n>
 Matrix<T, n, n> inverse(const Matrix<T, n, n>& ma) {
 	Matrix<T, n, n*2> tmp;
-	for (size_t i = 0; i < n; ++i)
-		for (size_t j = 0; j < n; ++j)
+	for (std::size_t i = 0; i < n; ++i)
+		for (std::size_t j = 0; j < n; ++j)
 			tmp.at(i, j) = ma.at(i, j);
-	for (size_t i = 0; i < n; ++i)
+	for (std::size_t i = 0; i < n; ++i)
 		tmp.at(i, i+n) = 1;
-	for (size_t i = 0; i < n; ++i) {
+	for (std::size_t i = 0; i < n; ++i) {
 		T t = tmp.at(i, i);
 		if (t == 0) {
 			throw std::overflow_error("MATRIX INVERSE ERROR: dividing by "
 					"zero.. no solution?");
 		}
-		for (size_t j = 0; j < n*2; ++j)
+		for (std::size_t j = 0; j < n*2; ++j)
 			tmp.at(i, j) = tmp.at(i ,j) / t;
-		for (size_t j = 0; j < n; ++j) {
+		for (std::size_t j = 0; j < n; ++j) {
 			if (i != j) {
 				t = tmp.at(j, i);
-				for (size_t k = 0; k < n*2; ++k)
+				for (std::size_t k = 0; k < n*2; ++k)
 					tmp.at(j, k) = tmp.at(j, k) - t * tmp.at(i, k);
 			}
 		}
 	}
 	Matrix<T, n, n> ret;
-	for (size_t i = 0; i < n; ++i)
-		for (size_t j = 0; j < n; ++j)
+	for (std::size_t i = 0; i < n; ++i)
+		for (std::size_t j = 0; j < n; ++j)
 			ret.at(i, j) = tmp.at(i, j+n);
 	return ret;
 }
@@ -323,7 +323,7 @@ Matrix<T, n, n> inverse(const Matrix<T, n, n>& ma) {
 template<typename T, std::size_t n>
 Matrix<T, n, n> makeIdentity() {
 	Matrix<T, n, n> ret;
-	for (size_t i = 0; i < n; ++i)
+	for (std::size_t i = 0; i < n; ++i)
 		ret.at(i,i) = 1;
 	return ret;
 }
