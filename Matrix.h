@@ -6,7 +6,9 @@
 	+=				-=				*= (skalar)			/= (skalar)		
 	==				!=				+					-				
 	* (matrise)		* (skalar)		/ (skalar)			<<
-	^
+	^				transponering	inversering
+ * Begrensninger: Inversering og multiplikasjon med skalar fungerer bare med 
+	matriser av tall
  * <eksempelbruk1>
 
 	Matrix<int, 3, 2> m1{
@@ -30,12 +32,12 @@
 #ifndef MATRIX_HEADER
 #define MATRIX_HEADER
 
-#include <initializer_list>	// initializer list
-#include <stdexcept>		// out_of_range
-#include <iostream>			// cout, endl
-#include <cstddef>			// size_t
-#include <string>			// to_string
-#include <array>			// array
+#include <initializer_list>		// initializer list
+#include <stdexcept>			// out_of_range, overflow_error
+#include <iostream>				// cout, endl
+#include <cstddef>				// size_t
+#include <string>				// to_string
+#include <array>				// array
 
 //---------------------------DECLARATIONS---------------------------------------
 
@@ -82,6 +84,12 @@ Matrix<T, n, n> operator^(const Matrix<T, n, n>& ma, std::size_t power);
 
 template<typename T, std::size_t n, std::size_t m>
 Matrix<T, m, n> transposed(const Matrix<T, n, m>& ma);
+
+template<typename T, std::size_t n>
+Matrix<T, n, n> inverse(const Matrix<T, n, n>& ma);
+
+template<typename T, std::size_t n>
+Matrix<T, n, n> makeIdentity();
 
 template<typename T, std::size_t n, std::size_t m>
 std::ostream& print_matrix(const Matrix<T, n, m>& ma, 
@@ -173,19 +181,19 @@ Matrix<T, n, m>& Matrix<T, n, m>::operator/=(T scalar) {
 
 template<typename T, std::size_t n, std::size_t m>
 std::ostream& operator<<(std::ostream& os, const Matrix<T, n, m>& ma) {
-	std::cout << '{';
+	os << '{';
 	for (std::size_t r = 0; r < n; ++r) {
-		std::cout << '{';
+		os << '{';
 		for (std::size_t c = 0; c < m; ++c) {
-			std::cout << ma.at(r, c);
+			os << ma.at(r, c);
 			if (c+1 < m)
-				std::cout << ", ";
+				os << ", ";
 		}
-		std::cout << '}';
+		os << '}';
 		if (r+1 < n)
-			std::cout << ", ";
+			os << ", ";
 	}
-	std::cout << '}';
+	os << '}';
 	return os;
 }
 
@@ -263,8 +271,12 @@ Matrix<T, n, m> operator/(T scalar, const Matrix<T, n, m>& ma) {
 template<typename T, std::size_t n>
 Matrix<T, n, n> operator^(const Matrix<T, n, n>& ma, std::size_t power) {
 	Matrix<T, n, n> ret(ma);
-	for (size_t i = 0; i < power-1; ++i)
-		ret = ret * ma;
+	if (power > 0) {
+		for (size_t i = 0; i < power-1; ++i)
+			ret = ret * ma;
+	} else {
+		return makeIdentity<T, n>();
+	}
 	return ret;
 }
 
@@ -277,12 +289,51 @@ Matrix<T, m, n> transposed(const Matrix<T, n, m>& ma) {
 	return ret;
 }
 
+template<typename T, std::size_t n>
+Matrix<T, n, n> inverse(const Matrix<T, n, n>& ma) {
+	Matrix<T, n, n*2> tmp;
+	for (size_t i = 0; i < n; ++i)
+		for (size_t j = 0; j < n; ++j)
+			tmp.at(i, j) = ma.at(i, j);
+	for (size_t i = 0; i < n; ++i)
+		tmp.at(i, i+n) = 1;
+	for (size_t i = 0; i < n; ++i) {
+		T t = tmp.at(i, i);
+		if (t == 0) {
+			throw std::overflow_error("MATRIX INVERSE ERROR: dividing by "
+					"zero.. no solution?");
+		}
+		for (size_t j = 0; j < n*2; ++j)
+			tmp.at(i, j) = tmp.at(i ,j) / t;
+		for (size_t j = 0; j < n; ++j) {
+			if (i != j) {
+				t = tmp.at(j, i);
+				for (size_t k = 0; k < n*2; ++k)
+					tmp.at(j, k) = tmp.at(j, k) - t * tmp.at(i, k);
+			}
+		}
+	}
+	Matrix<T, n, n> ret;
+	for (size_t i = 0; i < n; ++i)
+		for (size_t j = 0; j < n; ++j)
+			ret.at(i, j) = tmp.at(i, j+n);
+	return ret;
+}
+
+template<typename T, std::size_t n>
+Matrix<T, n, n> makeIdentity() {
+	Matrix<T, n, n> ret;
+	for (size_t i = 0; i < n; ++i)
+		ret.at(i,i) = 1;
+	return ret;
+}
+
 template<typename T, std::size_t n, std::size_t m>
 std::ostream& print_matrix(const Matrix<T, n, m>& ma, std::ostream& os)  {	
 	for (std::size_t r = 0; r < n; ++r) {
 		for (std::size_t c = 0; c < m; ++c)
-			std::cout << ma.at(r, c) << '\t';
-		std::cout << std::endl;
+			os << ma.at(r, c) << '\t';
+		os << std::endl;
 	}
 	return os;
 }
