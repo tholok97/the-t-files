@@ -6,9 +6,11 @@
 	+=				-=				*= (skalar)			/= (skalar)		
 	==				!=				+					-				
 	* (matrise)		* (skalar)		/ (skalar)			<<
-	^				transponering	inversering
- * Begrensninger: Inversering og multiplikasjon med skalar fungerer bare med 
-	matriser av tall
+	^				transponering	inversering			hente ut blokk
+ * Begrensninger: 
+	- Inversering og multiplikasjon med skalar fungerer bare med matriser 
+		av tall.
+	- Blokker kan ikke referanseoverføres
  * <eksempelbruk1>
 
 	Matrix<int, 3, 2> m1{
@@ -109,6 +111,8 @@ class Matrix {
 		explicit Matrix(std::initializer_list<std::initializer_list<T>> outer);
 		T& at(const std::size_t r, const std::size_t c);
 		T at(const std::size_t r, const std::size_t c) const;
+		template<std::size_t x, std::size_t y>
+		Matrix<T, x, y> block(std::size_t r, std::size_t c);
 		Matrix<T, n, m>& operator+=(const Matrix& ma);
 		Matrix<T, n, m>& operator-=(const Matrix& ma);
 		Matrix<T, n, m>& operator*=(T scalar);
@@ -145,6 +149,16 @@ T& Matrix<T, n, m>::at(const std::size_t r, const std::size_t c) {
 template<typename T, std::size_t n, std::size_t m>
 T Matrix<T, n, m>::at(const std::size_t r, const std::size_t c) const {
 	return mat.at(r).at(c);
+}
+
+template<typename T, std::size_t n, std::size_t m>
+template<std::size_t x, std::size_t y>
+Matrix<T, x, y> Matrix<T, n, m>::block(std::size_t r, std::size_t c) {
+	Matrix<T, x, y> ret;
+	for (size_t i = 0; i < x; ++i)
+		for (size_t j = 0; j < y; ++j)
+			ret.at(i, j) = at(i+r, j+c);
+	return ret;
 }
 
 template<typename T, std::size_t n, std::size_t m>
