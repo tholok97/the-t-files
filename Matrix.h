@@ -117,11 +117,13 @@ std::ostream& print_matrix(const Matrix<T, n, m>& ma,
 
 template<typename T, std::size_t n, std::size_t m>
 class Matrix {
-	typedef std::array<std::array<T, m>, n> Array_2d;
 	friend bool operator== <T, n, m>(const Matrix& lhs, const Matrix& rhs);
 	friend bool operator!= <T, n, m>(const Matrix& lhs, const Matrix& rhs);
 	private:
+		typedef std::array<std::array<T, m>, n> Array_2d;
 		Array_2d mat;
+		static constexpr std::size_t rows = n;
+		static constexpr std::size_t cols = m;
 	public:
 		Matrix(): mat{} { }
 		explicit Matrix(std::initializer_list<std::initializer_list<T>> outer);
@@ -129,10 +131,14 @@ class Matrix {
 		T at(const std::size_t r, const std::size_t c) const;
 		template<std::size_t x, std::size_t y>
 		Matrix<T, x, y> block(std::size_t r, std::size_t c);
+		static constexpr std::size_t get_rows() { return rows; }
+		static constexpr std::size_t get_cols() { return cols; }
 		Matrix<T, n, m>& operator+=(const Matrix& ma);
 		Matrix<T, n, m>& operator-=(const Matrix& ma);
 		Matrix<T, n, m>& operator*=(T scalar);
 		Matrix<T, n, m>& operator/=(T scalar);
+		typedef T Value_type;
+		typedef std::size_t Size_type;
 };
 
 //------------------------------DEFINITIONS-------------------------------------
