@@ -11,24 +11,39 @@
 	- Inversering og multiplikasjon med skalar fungerer bare med matriser 
 		av tall.
 	- Blokker kan ikke referanseoverføres
- * <eksempelbruk1>
+ * <eksempelbruk>
 
-	Matrix<int, 3, 2> m1{
-		{1, 2},
-		{0, 1},
-		{3, 9}
+	Matrix<double, 2, 4> m1{
+		{1,		2,		3,		4},
+		{5,		6,		7,		8}
 	};
 
-	Matrix<int, 2, 4> m2{
-		{1,0,6,2},
-		{2,1,0,1}
+	Matrix<double, 4, 3> m2{
+		{1,		2,		3},
+		{4,		5,		6},
+		{7,		8,		9},
+		{10,	11,		12}
 	};
 
-	std::cout << "m1 + m1: " << (m1 + m1) << std::endl;
-	std::cout << "m1 * m2:\n";
-	print_matrix(m1 * m2);
+	Matrix<double, 4, 4> m3{
+		{2,		2,		3,		2},
+		{3,		4,		4,		2},
+		{2,		3,		2,		3},
+		{3,		4,		2,		2}
+	};
 
-   </eksempelbruk1>
+	cout << "m1: " << m1 << "\n" << "m2: " << m2 << "\n\n";
+
+	cout << "m1 * m2:\n";
+	print_matrix((m1 * m2)) << "\n\n";
+
+	cout << "invers av m3:\n";
+	print_matrix(inverse(m3)) << "\n\n";
+
+	cout << "transponert av m2:\n";
+	print_matrix(transposed(m2)) << "\n\n";
+
+   </eksempelbruk>
 */
 
 #ifndef MATRIX_HEADER
@@ -38,6 +53,7 @@
 #include <stdexcept>			// out_of_range, overflow_error
 #include <iostream>				// cout, endl
 #include <cstddef>				// size_t
+#include <iomanip>				// setw
 #include <string>				// to_string
 #include <array>				// array
 
@@ -346,7 +362,7 @@ template<typename T, std::size_t n, std::size_t m>
 std::ostream& print_matrix(const Matrix<T, n, m>& ma, std::ostream& os)  {	
 	for (std::size_t r = 0; r < n; ++r) {
 		for (std::size_t c = 0; c < m; ++c)
-			os << ma.at(r, c) << '\t';
+			os << std::setw(12) << ma.at(r, c) << '\t';
 		os << std::endl;
 	}
 	return os;
