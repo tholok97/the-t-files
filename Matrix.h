@@ -91,11 +91,8 @@ Matrix<T, n, m> operator*(const Matrix<T, n, m>& ma, U scalar);
 template<typename T, typename U, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator*(U scalar, const Matrix<T, n, m>& ma);
 
-template<typename T, std::size_t n, std::size_t m>
-Matrix<T, n, m> operator/(const Matrix<T, n, m>& ma, T scalar);
-
-template<typename T, std::size_t n, std::size_t m>
-Matrix<T, n, m> operator/(T scalar, const Matrix<T, n, m>& ma);
+template<typename T, typename U, std::size_t n, std::size_t m>
+Matrix<T, n, m> operator/(const Matrix<T, n, m>& ma, U scalar);
 
 template<typename T, std::size_t n>
 Matrix<T, n, n> operator^(const Matrix<T, n, n>& ma, std::size_t power);
@@ -137,7 +134,8 @@ class Matrix {
 		Matrix<T, n, m>& operator-=(const Matrix& ma);
 		template<typename U>
 		Matrix<T, n, m>& operator*=(U scalar);
-		Matrix<T, n, m>& operator/=(T scalar);
+		template<typename U>
+		Matrix<T, n, m>& operator/=(U scalar);
 		typedef T Value_type;
 		typedef std::size_t Size_type;
 };
@@ -210,7 +208,8 @@ Matrix<T, n, m>& Matrix<T, n, m>::operator*=(U scalar) {
 }
 
 template<typename T, std::size_t n, std::size_t m>
-Matrix<T, n, m>& Matrix<T, n, m>::operator/=(T scalar) {
+template<typename U>
+Matrix<T, n, m>& Matrix<T, n, m>::operator/=(U scalar) {
 	for (std::size_t r = 0; r < n; ++r)
 		for (std::size_t c = 0; c < m; ++c)
 			mat.at(r).at(c) = mat.at(r).at(c) / scalar;
@@ -292,15 +291,8 @@ Matrix<T, n, m> operator*(U scalar, const Matrix<T, n, m>& ma) {
 	return ret;
 }
 
-template<typename T, std::size_t n, std::size_t m>
-Matrix<T, n, m> operator/(const Matrix<T, n, m>& ma, T scalar) {
-	Matrix<T, n, m> ret = ma;
-	ret /= scalar;
-	return ret;
-}
-
-template<typename T, std::size_t n, std::size_t m>
-Matrix<T, n, m> operator/(T scalar, const Matrix<T, n, m>& ma) {
+template<typename T, typename U, std::size_t n, std::size_t m>
+Matrix<T, n, m> operator/(const Matrix<T, n, m>& ma, U scalar) {
 	Matrix<T, n, m> ret = ma;
 	ret /= scalar;
 	return ret;
