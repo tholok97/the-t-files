@@ -8,7 +8,7 @@
 	* (matrise)		* (skalar)		/ (skalar)			<<
 	^				transponering	inversering			hente ut blokk
  * Begrensninger: 
-	- Inversering og multiplikasjon med skalar fungerer bare med matriser 
+	- Inversering fungerer bare med matriser 
 		av tall.
 	- Blokker kan ikke referanseoverføres
  * <eksempelbruk>
@@ -57,7 +57,7 @@
 #include <string>				// to_string
 #include <array>				// array
 
-//---------------------------DECLARATIONS---------------------------------------
+//---------------------------DEKLARASJONER--------------------------------------
 
 template<typename T, std::size_t n, std::size_t m>
 class Matrix;
@@ -85,11 +85,11 @@ template<typename T, std::size_t n, std::size_t m, std::size_t x>
 Matrix<T, n, m> operator*(const Matrix<T, n, x>& lhs,
 		const Matrix<T, x, m>& rhs);
 
-template<typename T, std::size_t n, std::size_t m>
-Matrix<T, n, m> operator*(const Matrix<T, n, m>& ma, T scalar);
+template<typename T, typename U, std::size_t n, std::size_t m>
+Matrix<T, n, m> operator*(const Matrix<T, n, m>& ma, U scalar);
 
-template<typename T, std::size_t n, std::size_t m>
-Matrix<T, n, m> operator*(T scalar, const Matrix<T, n, m>& ma);
+template<typename T, typename U, std::size_t n, std::size_t m>
+Matrix<T, n, m> operator*(U scalar, const Matrix<T, n, m>& ma);
 
 template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m> operator/(const Matrix<T, n, m>& ma, T scalar);
@@ -113,7 +113,7 @@ template<typename T, std::size_t n, std::size_t m>
 std::ostream& print_matrix(const Matrix<T, n, m>& ma, 
 		std::ostream& os = std::cout);
 
-//---------------------------CLASS DEFINITION-----------------------------------
+//---------------------------KLASSE-DEFINISJONER--------------------------------
 
 template<typename T, std::size_t n, std::size_t m>
 class Matrix {
@@ -135,13 +135,14 @@ class Matrix {
 		static constexpr std::size_t get_cols() { return cols; }
 		Matrix<T, n, m>& operator+=(const Matrix& ma);
 		Matrix<T, n, m>& operator-=(const Matrix& ma);
-		Matrix<T, n, m>& operator*=(T scalar);
+		template<typename U>
+		Matrix<T, n, m>& operator*=(U scalar);
 		Matrix<T, n, m>& operator/=(T scalar);
 		typedef T Value_type;
 		typedef std::size_t Size_type;
 };
 
-//------------------------------DEFINITIONS-------------------------------------
+//------------------------------DEFINISJONER------------------------------------
 
 template<typename T, std::size_t n, std::size_t m>
 Matrix<T, n, m>::Matrix(
@@ -200,7 +201,8 @@ Matrix<T, n, m>& Matrix<T, n, m>::operator-=(const Matrix& ma) {
 }
 
 template<typename T, std::size_t n, std::size_t m>
-Matrix<T, n, m>& Matrix<T, n, m>::operator*=(T scalar) {
+template<typename U>
+Matrix<T, n, m>& Matrix<T, n, m>::operator*=(U scalar) {
 	for (std::size_t r = 0; r < n; ++r)
 		for (std::size_t c = 0; c < m; ++c)
 			mat.at(r).at(c) = mat.at(r).at(c) * scalar;
@@ -276,15 +278,15 @@ Matrix<T, n, m> operator*(const Matrix<T, n, x>& lhs,
 	return ret;	
 }
 
-template<typename T, std::size_t n, std::size_t m>
-Matrix<T, n, m> operator*(const Matrix<T, n, m>& ma, T scalar) {
+template<typename T, typename U, std::size_t n, std::size_t m>
+Matrix<T, n, m> operator*(const Matrix<T, n, m>& ma, U scalar) {
 	Matrix<T, n, m> ret = ma;
 	ret *= scalar;
 	return ret;
 }
 
-template<typename T, std::size_t n, std::size_t m>
-Matrix<T, n, m> operator*(T scalar, const Matrix<T, n, m>& ma) {
+template<typename T, typename U, std::size_t n, std::size_t m>
+Matrix<T, n, m> operator*(U scalar, const Matrix<T, n, m>& ma) {
 	Matrix<T, n, m> ret = ma;
 	ret *= scalar;
 	return ret;
