@@ -30,6 +30,9 @@
 <p>Lar deg tegne tegninger og eksportere dem som 
 		svg-filer</p>
 
+<h3><a href="/vimrc.vim?ts=4">vimrc</a></h3>
+<p>Min vimrc</p>
+
 </br></br>
 
 <b>NB!</b> Bruk hyperlinkene! Koden min er skrevet med tabspace satt til 4, 
