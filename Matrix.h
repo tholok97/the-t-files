@@ -48,7 +48,7 @@
 #include <string>				// to_string
 #include <array>				// array
 
-//---------------------------DEKLARASJONER--------------------------------------
+//------------------------------- DEKLARASJONER --------------------------------
 
 template<typename T, std::size_t n, std::size_t m>
 class Matrix;
@@ -101,7 +101,7 @@ template<typename T, std::size_t n, std::size_t m>
 std::ostream& print_matrix(const Matrix<T, n, m>& ma, 
 		std::ostream& os = std::cout);
 
-//---------------------------KLASSE-DEFINISJON----------------------------------
+//----------------------------- KLASSE-DEFINISJON ------------------------------
 
 template<typename T, std::size_t n, std::size_t m>	// matrise av T, n x m stor
 class Matrix {
@@ -155,7 +155,7 @@ class Matrix {
 		typedef std::size_t Size_type;
 };
 
-//------------------------------DEFINISJONER------------------------------------
+//-------------------------------- DEFINISJONER --------------------------------
 
 // Constructor som fyller matrisa ut i fra en init-list. Oppfører seg som STL 
 //	constructorer av samme form

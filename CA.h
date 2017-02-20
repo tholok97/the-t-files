@@ -102,7 +102,7 @@ class CA {
 		const bool operator[](std::size_t index) const { return arr[index]; }
 };
 
-//--------------------------INTERNE UTILITY FUNKSJONER--------------------------
+//------------------------- INTERNE UTILITY-FUNKSJONER -------------------------
 
 // Initialiserer systemet med utgangsvec og spesifisert regelsett. Regelsett
 //  gis som int, oversettes til vec. Alle constructors ender opp her
@@ -147,7 +147,7 @@ bool CA::rules(const bool a, const bool b, const bool c) {
 			((c != 0) ? 1 : 0)];								
 }
 
-//--------------------------------CONSTRUCTORS----------------------------------
+//-------------------------------- CONSTRUCTORS --------------------------------
 
 // Lager et nytt CA basert på en utgangs-vec og et regelsettnummer.
 CA::CA(const vec initArr, const int rulesetInt) {
@@ -180,7 +180,7 @@ CA::CA(const int size) {
 	init(initArr, DEFAULTRULESET);
 }
 
-//---------------------------DIV. FUNKSJONER------------------------------------
+//------------------------------ DIV. FUNKSJONER -------------------------------
 
 // Setter for ruleset. Tar et tall (mellom 0 og 255) og oppdaterer ruleset 
 //	basert på dette
@@ -255,7 +255,7 @@ CA CA::operator++(int) {
 	return ret;
 }
 
-//--------------------------GLOBALE FUNKSJONER----------------------------------
+//----------------------------- GLOBALE FUNKSJONER -----------------------------
 
 // Overloader << operatoren så vi kan skrive ut CA med denne, returnerer os
 std::ostream& operator<<(std::ostream &os, const CA &ca) {

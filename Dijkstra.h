@@ -112,7 +112,7 @@ class Dijkstra {
 Dijkstra<std::pair<int, int>> gridToDijkstra(std::vector<
 		std::vector<bool>> grid);
 
-//---------------------------------CONSTRUCTORS---------------------------------
+//-------------------------------- CONSTRUCTORS --------------------------------
 
 // Lager et nytt objekt basert på en liste med nodenavn og en funskjon som kan
 //  brukes for å sjekke hvilke av nodene i listen som er naboer. Kantliste blir
@@ -166,7 +166,7 @@ Dijkstra<T>::Dijkstra(std::vector<T> nodeVector,
 	}
 }
 
-//--------------------------------FUNKSJONER------------------------------------
+//--------------------------------- FUNKSJONER ---------------------------------
 
 // Utfører Dijkstras algoritme på advec med (start, end). Returnerer stien som 
 //  en vektor av nodenavn hvis denne finnes, eller en tom sti dersom ingen stier
@@ -349,7 +349,7 @@ bool Dijkstra<T>::isBroken() const {
 	return broken;
 }
 
-//------------------------------GLOBALE FUNKSJONER------------------------------
+//----------------------------- GLOBALE FUNKSJONER -----------------------------
 
 // Tar et 2-dimensjonelt grid av boolske verdier og danner nodeliste og 
 //	nabofunksjon for dette. Returnerer et Dijkstra-objekt hvor nodenavn er 

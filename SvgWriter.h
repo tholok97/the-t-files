@@ -50,7 +50,7 @@ class SvgWriter {
 		void write();										// dumper til fil
 };
 
-//----------------------INTERNE UTILITY FUNKSJONER------------------------------
+//------------------------- INTERNE UTILITY-FUNKSJONER -------------------------
 
 // Returnerer en ferdigformatert string med style info. Kan puttes direkte inn
 //	i style feltet i foreks en linje i svg.
@@ -63,7 +63,7 @@ std::string SvgWriter::styles() {
 	return oss.str();
 }
 
-//-----------------------------CONSTRUCTORS-------------------------------------
+//-------------------------------- CONSTROCTORS --------------------------------
 
 // Lager en ny SvgWriter basert på path til fil, vidde og høyde
 SvgWriter::SvgWriter(std::string path, int width, int height): path(path), 
@@ -73,7 +73,7 @@ SvgWriter::SvgWriter(std::string path, int width, int height): path(path),
 			
 }
 
-//---------------------------SETTERE OG GETTERE---------------------------------
+//----------------------------- GETTERE OG SETTERE -----------------------------
 
 // Tar en farge på formen (int, int, int) og setter 'strokeColor' lik denne.
 void SvgWriter::setStrokeColor(int r, int g, int b) {
@@ -106,7 +106,7 @@ void SvgWriter::setFill(int r, int g, int b) {
 	fill = oss.str();
 }
 
-//-----------------------------DIV FUNKSJONER-----------------------------------
+//------------------------------ DIV. FUNKSJONER -------------------------------
 
 // Legger til en linje i outputString gitt (x1,y1) og (x2,y2). Henter stilinfo
 //  fra 'styles()'. Linjer i svg er på formen: <line x1="0" y1="0" 

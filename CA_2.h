@@ -30,7 +30,7 @@
 #include <bitset>
 #include <string>
 
-//-------------------------(FORWARD) DECLARATIONS-------------------------------
+//-------------------------- (FORWARD) DEKLARASJONER ---------------------------
 
 template <std::size_t N> class CA;
 template <std::size_t N> std::ostream& operator<<(std::ostream& os, 
@@ -38,7 +38,7 @@ template <std::size_t N> std::ostream& operator<<(std::ostream& os,
 template <std::size_t N> std::ostream& printCA(const CA<N>& ca, 
 		std::ostream& = std::cout, const char on = 219, const char off = 176); 
 
-//---------------------------CLASS DEFINITIONS----------------------------------
+//----------------------------- KLASSE-DEFINISJON ------------------------------
 
 template <std::size_t N>
 class CA {
@@ -76,7 +76,7 @@ class CA {
 		void step();	// Tar ett steg
 };
 
-//--------------------------CLASS MEMBER DEFINITIONS----------------------------
+//---------------------------- MEMBER DEFINISJONER -----------------------------
 
 // Lager et nytt CA<N>-objekt basert på størrelse, utgangssystem og regelsett.
 //	Om regelsettet ikke er oppgitt får dette verdi 30, om utganssystemet ikke er
@@ -175,7 +175,7 @@ void CA<N>::step() {
 	++iteration;		// øker iteration
 }
 
-//--------------------------GLOBAL DEFINITIONS----------------------------------
+//---------------------------- GLOBALE DEFINISJONER ----------------------------
 
 // Overloadet <<-operator. Skriver ut via <<-operatoren på bitset
 template <std::size_t N>

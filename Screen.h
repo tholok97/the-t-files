@@ -70,7 +70,7 @@ class Screen {
 		void print();									// Printer tegneflaten
 };
 
-//-------------------------Private funksjoner-----------------------------------
+//----------------------------- PRIVATE FUNKSJONER -----------------------------
 
 // Sjekker om (x, y) er innenfor tegneflaten og returnerer en passende bool
 //  verdi
@@ -98,7 +98,7 @@ bool Screen::swap(float &a, float &b) {
 	b = save;
 }
 
-//-------------------------Constructors-----------------------------------------
+//-------------------------------- CONSTRUCTORS --------------------------------
 
 // Constructor for Screen. Lager en ny Screen basert på vidde, høyde, bakgrunn
 //  og maling. Fyller tegneflaten med bakgrunnsmaling
@@ -137,7 +137,7 @@ Screen::Screen(const int width, const int height) {
 	}
 }
 
-//-----------------------------Diverse funksjoner-------------------------------
+//----------------------------- DIVERSE FUNKSJONER -----------------------------
 
 // Tegner en dot ved (x, y). Sjekker først om (x, y) er utenfor tegneflaten,
 //  finner deretter posisjonen i content (pos = x + y*width) og tegner dotten
