@@ -6,8 +6,6 @@ filetype on
 "}}}
 "-------------------------------- ABBREVIATIONS -----------------------------{{{
 
-iabbrev @@ thomahl@stud.ntnu.no
-iabbrev @n 473157
 iabbrev intmain #include <iostream><cr><cr>using namespace std;<cr><cr>int
 		\main() {<cr><cr><cr><cr>return 0;<cr>}
 
