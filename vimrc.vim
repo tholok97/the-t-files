@@ -1,4 +1,9 @@
+" Laget av: Thomas Løkkeborg
+
 "------------------------------------- PRE ----------------------------------{{{
+
+" skrur av highlighting av forrige søk
+nohlsearch
 
 " skrur på filtype
 filetype on
@@ -7,31 +12,33 @@ filetype on
 "-------------------------------- ABBREVIATIONS -----------------------------{{{
 
 iabbrev intmain #include <iostream><cr><cr>using namespace std;<cr><cr>int
-		\main() {<cr><cr><cr><cr>return 0;<cr>}
+		\ main() {<cr><cr><cr><cr>return 0;<cr>}
 
 "}}}
 "--------------------------------- FUNKSJONER -------------------------------{{{
 
 " funksjoner som erstatter ord under cursor med ord gitt ved input
 function! SearchAndReplaceCword()
-	let word = "\\<" . expand("<cword>") . "\\>"
-	let replacement = input("Erstatning? ")
-	execute ":%s/" . word . "/" . replacement . "/g"
+	let l:word = "\\<" . expand("<cword>") . "\\>"
+	let l:replacement = input("Erstatning? ")
+	execute ":%s/" . l:word . "/" . l:replacement . "/g"
 	normal 
 endfunction
 
 " (denne kjører med gc, fra current line)
 function! SearchAndReplaceCwordC()
-	let word = "\\<" . expand("<cword>") . "\\>"
-	let replacement = input("Erstatning? ")
-	execute "%s/" . word . "/" . replacement . "/gc"
+	let l:word = "\\<" . expand("<cword>") . "\\>"
+	let l:replacement = input("Erstatning? ")
+	execute "%s/" . l:word . "/" . l:replacement . "/gc"
 	normal 
 endfunction
 
 " søk etter noe gitt ved en motion med vimgrep. Søker igjennom .cpp, .py og .pdb
 " -filer i samme mappe
 function! s:GrepOperator(type)
-	let savedUnnamedRegister = @@
+	let g:quickfix_return_to_window = winnr()
+	let g:quickfix_is_open = 1
+	let l:savedUnnamedRegister = @@
 
 	 if a:type ==# 'v'
 			normal! `<v`>y
@@ -45,19 +52,38 @@ function! s:GrepOperator(type)
 	silent execute "vimgrep /" . @@ . "/j *.cpp *.py *.pdb"
 	copen
 
-	let @@ = savedUnnamedRegister
+	let @@ = l:savedUnnamedRegister
 endfunction
 
 " lager tittel basert på kommenteringsstil (param) og input fra bruker
 function! MakeTitle(cmt)
-	let title = input("Tittel? ")
-	let total = 80 - len(title) - len(a:cmt) - 2
-	let extra = 0
-	if (len(title) + len(a:cmt)) % 2 ==# 1
-		let extra = 1
+	let l:title = input("Tittel? ")
+	let l:total = 80 - len(title) - len(a:cmt) - 2
+	let l:extra = 0
+	if (len(l:title) + len(a:cmt)) % 2 ==# 1
+		let l:extra = 1
 	endif
-	execute "normal! o" . a:cmt . repeat('-', total/2) . " " . toupper(title) . 
-			\" " . repeat('-', total/2 + extra) . "\<esc>"
+	execute "normal! o" . a:cmt . repeat('-', total/2) . " " . toupper(l:title)
+			\. " " . repeat('-', total/2 + l:extra) . "\<esc>"
+endfunction
+
+" funksjon som åpner / lukker quickfix-vinduet
+let g:quickfix_is_open = 0
+function! QuickfixToggle()
+	if g:quickfix_is_open
+		cclose
+		let g:quickfix_is_open = 0
+		execute g:quickfix_return_to_window . "wincmd w"
+	else
+		let g:quickfix_return_to_window = winnr()
+		copen
+		let g:quickfix_is_open = 1
+	endif
+endfunction
+
+" returnerer x 923'er. x er antall som kan passe fint på skjermen
+function! NiTjueTre()
+	return ' ' . repeat('923 ', winwidth(0)/8)
 endfunction
 
 "}}}
@@ -81,7 +107,7 @@ set hlsearch
 set incsearch
 
 augroup cppSpecific
-	autocmd Filetype cpp set cindent
+	autocmd Filetype cpp setlocal cindent
 augroup END
 
 "}}}
@@ -93,7 +119,8 @@ colorscheme darkblue
 highlight ColorColumn ctermbg=6
 
 " farge på nitjuetre-felt
-highlight ntt ctermbg=black ctermfg=darkgrey
+highlight ntt ctermbg=0 ctermfg=2
+highlight StatusLine term=reverse ctermfg=0 ctermbg=2 gui=bold,reverse
 
 " setter at statuslinja alltid skal vises
 set laststatus=2
@@ -101,12 +128,11 @@ set laststatus=2
 " farge på statuslinja skifter ved modusskifte, og vimrc folding
 if version >= 700
 	augroup statuslineGroup
-		autocmd VimEnter * highlight StatusLine term=reverse ctermfg=0 
-				\ctermbg=2 gui=bold,reverse
 		autocmd InsertEnter * highlight StatusLine term=reverse ctermbg=5 
-				\gui=undercurl guisp=Magenta
+		autocmd InsertEnter * highlight ntt ctermbg=0 ctermfg=5 term=reverse
 		autocmd InsertLeave * highlight StatusLine term=reverse ctermfg=0 
-				\ctermbg=2 gui=bold,reverse
+				\ctermbg=2
+		autocmd InsertLeave * highlight ntt ctermbg=0 ctermfg=2
 		autocmd CursorHold * echo "Whatareyouwaitingfoooooooooooooooooooooooor!"
     	autocmd FileType vim setlocal foldmethod=marker
 		autocmd Filetype vim setlocal foldlevelstart=0
@@ -122,7 +148,7 @@ set statusline+=\ -\ 			" separator
 set statusline+=FileType:		" tekst
 set statusline+=%y				" FileTypen til filen
 set statusline+=\ \ \ %#ntt#	" spacing og start ny highlight-gruppe 	(923)
-set statusline+=923\ 923\ 923\ 923\ 923\ 923\ 923\ 923\ 923\ 923\ 923 "	(923)
+set statusline+=%{NiTjueTre()}	" skriv ut 923 via funksjon
 set statusline+=%#Statusline#	" endre tilbake til default
 
 " (høyre side)
@@ -152,8 +178,6 @@ nnoremap j gj
 nnoremap k gk
 inoremap jk <esc>
 nnoremap Y y$
-nnoremap + ddp
-nnoremap - ddkP
 nnoremap H _
 nnoremap L $
 nnoremap <c-e> <c-e>j
@@ -193,7 +217,7 @@ nnoremap <leader><cr> @q
 " vimgrep greier:
 nnoremap <leader>g :set operatorfunc=<SID>GrepOperator<cr>g@
 vnoremap <leader>g :<c-u>call <SID>GrepOperator(visualmode())<cr>
-nnoremap <leader>m :cclose<cr>
+nnoremap <leader>m :call QuickfixToggle()<cr>
 nnoremap <leader>n :cnext<cr>
 nnoremap <leader>p :cprevious<cr>
 
@@ -205,8 +229,12 @@ nnoremap <leader><s-o> O<esc>
 nnoremap <leader>u :match Error /\v\s+$/<cr>
 nnoremap <leader>i :match none<cr>
 
-" motion for å velge hele filen
-onoremap a :<c-u>normal! ggVG<cr>
+" flytt linje én opp, én ned
+nnoremap <leader>+ ddp
+nnoremap <leader>- ddkP
+
+"" motion for å velge hele filen
+"onoremap a :<c-u>normal! ggVG<cr>
 
 " omring ord i hermetegn
 nnoremap <leader>2 mqviw<esc>a"<esc>bi"<esc>`ql
@@ -246,3 +274,32 @@ augroup END
 "}}}
 
 "}}}
+
+
+"------------------------------------ TODO: ------------------------------------
+"	- <leader>d søk fra current line
+"	- kommenter SETTER VERDIER
+"	- finne ut av hvordan backspace og enter skal funke (LØST?)
+" 	- egen farge på linjenummeret til currentline? (umulig?)
+"	- statuslinja burde vise når du er i v-mode
+"	- <F2> kunne fungert bedre
+"	- <leader>d <c-d> ??
+"	- read map-operator
+"	- søk og erstatt som tar movement
+
+"onoremap s /^}<cr>
+"onoremap S :execute +"normal! /^}\rva{g_o0"<cr>
+"set autoindent
+"set shiftround
+"set showmatch
+
+"nnoremap <leader>1 :call FoldColumnToggle()<cr>
+"
+"function! FoldColumnToggle()
+"	if &foldcolumn
+"		setlocal foldcolumn=0
+"	else
+"		setlocal foldcolumn=2
+"	endif
+"endfunction
+
