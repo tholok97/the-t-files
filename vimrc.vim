@@ -2,15 +2,25 @@
 
 "------------------------------------- PRE ----------------------------------{{{
 
+" netwr greier. skrur av banneret og skrur på tre
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+
 " skrur av highlighting av forrige søk
 nohlsearch
 
 " skrur på filtype
 filetype on
 
+" sett opp (gui) font-greier om det ikke allerede er satt opp
+if !exists("g:font_size")
+	let g:font_size = 10
+	silent execute "normal! :set guifont=Consolas:h" . font_size . "\<cr>"
+endif
+
 "}}}
 "-------------------------------- ABBREVIATIONS -----------------------------{{{
-
+iabbrev @@ thomahl@stud.ntnu.no
 iabbrev intmain #include <iostream><cr><cr>using namespace std;<cr><cr>int
 		\ main() {<cr><cr><cr><cr>return 0;<cr>}
 
@@ -38,21 +48,21 @@ endfunction
 function! s:GrepOperator(type)
 	let g:quickfix_return_to_window = winnr()
 	let g:quickfix_is_open = 1
-	let l:savedUnnamedRegister = @@
+	let l:saved_unnamed_register = @@
 
-	 if a:type ==# 'v'
-			normal! `<v`>y
-		elseif a:type ==# 'char'
-			normal! `[y`]y
-		else
-			return
-		endif
+	if a:type ==# 'v'
+		normal! `<v`>y
+	elseif a:type ==# 'char'
+		normal! `[y`]y
+	else
+		return
+	endif
 
 	echom "Søker etter: " . @@
-	silent execute "vimgrep /" . @@ . "/j *.cpp *.py *.pdb"
+	silent execute "vimgrep /" . @@ . "/j *.cpp *.py *.pdb *.md"
 	copen
 
-	let @@ = l:savedUnnamedRegister
+	let @@ = l:saved_unnamed_register
 endfunction
 
 " lager tittel basert på kommenteringsstil (param) og input fra bruker
@@ -63,8 +73,8 @@ function! MakeTitle(cmt)
 	if (len(l:title) + len(a:cmt)) % 2 ==# 1
 		let l:extra = 1
 	endif
-	execute "normal! o" . a:cmt . repeat('-', total/2) . " " . toupper(l:title)
-			\. " " . repeat('-', total/2 + l:extra) . "\<esc>"
+	execute "normal! o\<esc>o\<esc>ko" . a:cmt . repeat('-', total/2) . " " .
+			\toupper(l:title) . " " . repeat('-', total/2 + l:extra) . "\<esc>"
 endfunction
 
 " funksjon som åpner / lukker quickfix-vinduet
@@ -86,12 +96,78 @@ function! NiTjueTre()
 	return ' ' . repeat('923 ', winwidth(0)/8)
 endfunction
 
+" øk (gui) font-størrelsen
+function! IncGUIFontSize()
+	let g:font_size += 1	
+	execute "normal! :set guifont=Consolas:h" . g:font_size . "\<cr>"
+endfunction
+
+" minske (gui) font-størrelsen
+function! DecGUIFontSize()
+	let g:font_size -= 1	
+	execute "normal! :set guifont=Consolas:h" . g:font_size . "\<cr>"
+endfunction
+
+" roterer farger på AABBCCDDEEFF-feltet (gui)
+let g:offset = 0
+let g:face = 0
+function! RotateColors(isInsertMode)
+
+	if a:isInsertMode == 1
+		let l:gui_color_list = ['purple', 'purple', 'purple', 'purple', 'purple', 'purple']
+	else
+		let l:gui_color_list = ['darkgreen', 'darkgreen', 'darkgreen', 'darkgreen', 'darkgreen', 'darkgreen']
+	endif
+
+	let l:gui_color_list[g:offset] = 'Black'
+	let l:gui_color_list[g:offset+1] = 'Black'
+
+	silent execute "normal! :highlight AA guibg=" . l:gui_color_list[0] . "\<cr>"
+	silent execute "normal! :highlight BB guibg=" . l:gui_color_list[1] . "\<cr>"
+	silent execute "normal! :highlight CC guibg=" . l:gui_color_list[2] . "\<cr>"
+	silent execute "normal! :highlight DD guibg=" . l:gui_color_list[3] . "\<cr>"
+	silent execute "normal! :highlight EE guibg=" . l:gui_color_list[4] . "\<cr>"
+	silent execute "normal! :highlight FF guibg=" . l:gui_color_list[5] . "\<cr>"
+
+	if g:face == 0
+		let g:offset = g:offset + 1
+		if g:offset == len(l:gui_color_list) - 2
+			let g:face = 1
+		endif
+	else
+		let g:offset = g:offset - 1
+		if g:offset == 0
+			let g:face = 0
+		endif
+	endif
+endfunction
+
+" toggle markdown-modus
+let g:is_in_md_mode = 0
+function! ToggleMarkdownMode()
+	if (g:is_in_md_mode == 0)
+		set wrap
+		set linebreak
+		set nonumber
+		set laststatus=0
+		let g:is_in_md_mode = 1
+	else
+		set nowrap
+		set nolinebreak
+		set number
+		set laststatus=2
+		let g:is_in_md_mode = 0
+	endif
+endfunction
+
 "}}}
 "------------------------------- SETTER VERDIER -----------------------------{{{
 
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
+"set expandtab
+
 set number
 set backspace=2
 set cc=80
@@ -118,9 +194,13 @@ syntax on
 colorscheme darkblue
 highlight ColorColumn ctermbg=6
 
-" farge på nitjuetre-felt
-highlight ntt ctermbg=0 ctermfg=2
-highlight StatusLine term=reverse ctermfg=0 ctermbg=2 gui=bold,reverse
+" utgangsfarge på statuslinja
+highlight ntt ctermbg=0 guibg=Black ctermfg=2 guifg=darkgreen
+highlight StatusLine ctermfg=0 guifg=Black ctermbg=2 guibg=darkgreen
+if has("gui_running")
+	highlight Normal guibg=Black
+	highlight Visual guifg=Red guibg=Black
+endif
 
 " setter at statuslinja alltid skal vises
 set laststatus=2
@@ -128,11 +208,19 @@ set laststatus=2
 " farge på statuslinja skifter ved modusskifte, og vimrc folding
 if version >= 700
 	augroup statuslineGroup
-		autocmd InsertEnter * highlight StatusLine term=reverse ctermbg=5 
-		autocmd InsertEnter * highlight ntt ctermbg=0 ctermfg=5 term=reverse
-		autocmd InsertLeave * highlight StatusLine term=reverse ctermfg=0 
-				\ctermbg=2
-		autocmd InsertLeave * highlight ntt ctermbg=0 ctermfg=2
+		autocmd!
+		autocmd InsertEnter * highlight StatusLine ctermfg=0 guifg=Black
+				\ ctermbg=5 guibg=purple
+		autocmd InsertEnter * highlight ntt ctermbg=0 guibg=Black ctermfg=5
+				\ guifg=purple
+		autocmd InsertLeave * highlight StatusLine ctermfg=0 guifg=Black
+				\ ctermbg=2 guibg=darkgreen
+		autocmd InsertLeave * highlight ntt ctermbg=0 guibg=Black ctermfg=2
+				\ guifg=darkgreen
+		if has("gui_running")
+			autocmd InsertEnter * call RotateColors(1)
+			autocmd InsertLeave * call RotateColors(0)
+		endif
 		autocmd CursorHold * echo "Whatareyouwaitingfoooooooooooooooooooooooor!"
     	autocmd FileType vim setlocal foldmethod=marker
 		autocmd Filetype vim setlocal foldlevelstart=0
@@ -140,8 +228,12 @@ if version >= 700
 	augroup END
 endif
 
+
 " bygger statuslinja (venstre side)
-set statusline=%#Statusline# 	" så uvalgte vinduer ikke blir hvite
+if has("gui_running")
+	set statusline=%#StatusLine#%#AA#\ %#BB#\ %#CC#\ %#DD#\ %#EE#\ %#FF#\ 
+endif
+set statusline+=%#Statusline#\  " så uvalgte vinduer ikke blir hvite
 set statusline+=%m				" vis om filen er endret
 set statusline+=%f         		" stien til filen
 set statusline+=\ -\ 			" separator
@@ -169,9 +261,12 @@ nnoremap <Down>		<C-W>-
 nnoremap <Left>		<C-W><
 nnoremap <Right>	<C-W>>
 
-" åpne / laste vimrc
-nnoremap <F2>		:sp $myvimrc <cr>
-nnoremap <F3>		:so $myvimrc <cr>
+" Function key -kommandoer (F1: cmd, F2: vimrc, F3: source vimrc, F4: md-mode)
+nnoremap <F1>		:silent !start cmd<cr>
+nnoremap <F2>		:sp $myvimrc<cr>
+nnoremap <F3>		:so $myvimrc<cr>
+nnoremap <F4>		:call ToggleMarkdownMode()<cr>
+
 
 " div. modifikasjoner til bevegelser i vim
 nnoremap j gj
@@ -182,6 +277,10 @@ nnoremap H _
 nnoremap L $
 nnoremap <c-e> <c-e>j
 nnoremap <c-y> <c-y>k
+
+" øk/minske (gui) font-størrelsen
+nnoremap <leader><up>		:call IncGUIFontSize()<cr>
+nnoremap <leader><down>		:call DecGUIFontSize()<cr>
 
 " vindu-greier:
 nnoremap <leader><leader> <c-w><c-w>
@@ -206,12 +305,13 @@ nnoremap <leader>r :call SearchAndReplaceCword() <cr>
 nnoremap <leader>e :call SearchAndReplaceCwordC() <cr>
 nnoremap <leader>y :nohlsearch<cr>
 
-" mark
+" mark. 2 stykk. Trykk én gang for å sette, og to for å gå til
 nnoremap <leader>s ma
-nnoremap <leader>a `a
+nnoremap <leader>ss `a
+nnoremap <leader>a mb
+nnoremap <leader>aa `b
 
-" macro
-nnoremap <leader><bs> qq
+" macro (start med qq, slutt med q, kjør med <leader><cr>)
 nnoremap <leader><cr> @q
 
 " vimgrep greier:
@@ -233,9 +333,6 @@ nnoremap <leader>i :match none<cr>
 nnoremap <leader>+ ddp
 nnoremap <leader>- ddkP
 
-"" motion for å velge hele filen
-"onoremap a :<c-u>normal! ggVG<cr>
-
 " omring ord i hermetegn
 nnoremap <leader>2 mqviw<esc>a"<esc>bi"<esc>`ql
 nnoremap <leader>" mqF"xf"x`qh
@@ -244,7 +341,7 @@ nnoremap <leader>* mqF'xf'x`qh
 
 " kommenteringssnarveier:
 "...{{{
-augroup commentingShortcuts
+augroup commenting_shortcuts
 	autocmd!
 	autocmd FileType cpp nnoremap <buffer> <leader>b :call
 			\ MakeTitle("//")<cr>
@@ -270,36 +367,13 @@ augroup commentingShortcuts
 	autocmd FileType prolog nnoremap <buffer> <leader>x 	mq0x`qh
 	autocmd FileType prolog vnoremap <buffer> <leader>c 	omq0<S-i>%<esc>`ql
 	autocmd FileType prolog vnoremap <buffer> <leader>x 	omq0o0x`qh
+	autocmd FileType tex nnoremap <buffer> <leader>b :call
+			\ MakeTitle("%")<cr>
+	autocmd FileType tex nnoremap <buffer> <leader>c 	mq0i%<esc>`ql
+	autocmd FileType tex nnoremap <buffer> <leader>x 	mq0x`qh
+	autocmd FileType tex vnoremap <buffer> <leader>c 	omq0<S-i>%<esc>`ql
+	autocmd FileType tex vnoremap <buffer> <leader>x 	omq0o0x`qh
 augroup END
 "}}}
 
 "}}}
-
-
-"------------------------------------ TODO: ------------------------------------
-"	- <leader>d søk fra current line
-"	- kommenter SETTER VERDIER
-"	- finne ut av hvordan backspace og enter skal funke (LØST?)
-" 	- egen farge på linjenummeret til currentline? (umulig?)
-"	- statuslinja burde vise når du er i v-mode
-"	- <F2> kunne fungert bedre
-"	- <leader>d <c-d> ??
-"	- read map-operator
-"	- søk og erstatt som tar movement
-
-"onoremap s /^}<cr>
-"onoremap S :execute +"normal! /^}\rva{g_o0"<cr>
-"set autoindent
-"set shiftround
-"set showmatch
-
-"nnoremap <leader>1 :call FoldColumnToggle()<cr>
-"
-"function! FoldColumnToggle()
-"	if &foldcolumn
-"		setlocal foldcolumn=0
-"	else
-"		setlocal foldcolumn=2
-"	endif
-"endfunction
-
