@@ -2,9 +2,11 @@
 
 "------------------------------------- PRE ----------------------------------{{{
 
-" netwr greier. skrur av banneret og skrur på tre
+" netwr greier. skrur av banneret, skrur på tre, setter bredden på ø-vinduet og
+" ignorerer swp-filer 
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
+let g:netrw_list_hide= '.*\.swp$'
 
 " skrur av highlighting av forrige søk
 nohlsearch
@@ -53,13 +55,13 @@ function! s:GrepOperator(type)
 	if a:type ==# 'v'
 		normal! `<v`>y
 	elseif a:type ==# 'char'
-		normal! `[y`]y
+		normal! `[v`]y
 	else
 		return
 	endif
 
 	echom "Søker etter: " . @@
-	silent execute "vimgrep /" . @@ . "/j *.cpp *.py *.pdb *.md"
+	silent execute "vimgrep /" . @@ . "/j *.cpp *.h *.py *.pdb *.md"
 	copen
 
 	let @@ = l:saved_unnamed_register
@@ -108,40 +110,6 @@ function! DecGUIFontSize()
 	execute "normal! :set guifont=Consolas:h" . g:font_size . "\<cr>"
 endfunction
 
-" roterer farger på AABBCCDDEEFF-feltet (gui)
-let g:offset = 0
-let g:face = 0
-function! RotateColors(isInsertMode)
-
-	if a:isInsertMode == 1
-		let l:gui_color_list = ['purple', 'purple', 'purple', 'purple', 'purple', 'purple']
-	else
-		let l:gui_color_list = ['darkgreen', 'darkgreen', 'darkgreen', 'darkgreen', 'darkgreen', 'darkgreen']
-	endif
-
-	let l:gui_color_list[g:offset] = 'Black'
-	let l:gui_color_list[g:offset+1] = 'Black'
-
-	silent execute "normal! :highlight AA guibg=" . l:gui_color_list[0] . "\<cr>"
-	silent execute "normal! :highlight BB guibg=" . l:gui_color_list[1] . "\<cr>"
-	silent execute "normal! :highlight CC guibg=" . l:gui_color_list[2] . "\<cr>"
-	silent execute "normal! :highlight DD guibg=" . l:gui_color_list[3] . "\<cr>"
-	silent execute "normal! :highlight EE guibg=" . l:gui_color_list[4] . "\<cr>"
-	silent execute "normal! :highlight FF guibg=" . l:gui_color_list[5] . "\<cr>"
-
-	if g:face == 0
-		let g:offset = g:offset + 1
-		if g:offset == len(l:gui_color_list) - 2
-			let g:face = 1
-		endif
-	else
-		let g:offset = g:offset - 1
-		if g:offset == 0
-			let g:face = 0
-		endif
-	endif
-endfunction
-
 " toggle markdown-modus
 let g:is_in_md_mode = 0
 function! ToggleMarkdownMode()
@@ -163,10 +131,12 @@ endfunction
 "}}}
 "------------------------------- SETTER VERDIER -----------------------------{{{
 
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-"set expandtab
+" PROSJEKT PROSJEKT PROSJEKT PROSJEKT skal være 4
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+set expandtab
+" PROSJEKT PROSJEKT PROSJEKT PROSJEKT skal være 4
 
 set number
 set backspace=2
@@ -192,14 +162,18 @@ augroup END
 " syntax, colorscheme og farge på grenselinje
 syntax on
 colorscheme darkblue
-highlight ColorColumn ctermbg=6
+highlight ColorColumn ctermbg=6 guibg=darkRed
 
 " utgangsfarge på statuslinja
 highlight ntt ctermbg=0 guibg=Black ctermfg=2 guifg=darkgreen
 highlight StatusLine ctermfg=0 guifg=Black ctermbg=2 guibg=darkgreen
+
+" MIDLERTIDIG FIX. gjør colorschemet mer leslig
 if has("gui_running")
 	highlight Normal guibg=Black
 	highlight Visual guifg=Red guibg=Black
+  highlight Comment guifg=darkred
+  highlight ColorColumn guibg=grey
 endif
 
 " setter at statuslinja alltid skal vises
@@ -217,12 +191,8 @@ if version >= 700
 				\ ctermbg=2 guibg=darkgreen
 		autocmd InsertLeave * highlight ntt ctermbg=0 guibg=Black ctermfg=2
 				\ guifg=darkgreen
-		if has("gui_running")
-			autocmd InsertEnter * call RotateColors(1)
-			autocmd InsertLeave * call RotateColors(0)
-		endif
 		autocmd CursorHold * echo "Whatareyouwaitingfoooooooooooooooooooooooor!"
-    	autocmd FileType vim setlocal foldmethod=marker
+    autocmd FileType vim setlocal foldmethod=marker
 		autocmd Filetype vim setlocal foldlevelstart=0
 		autocmd FileType vim setlocal foldcolumn=2
 	augroup END
@@ -230,10 +200,7 @@ endif
 
 
 " bygger statuslinja (venstre side)
-if has("gui_running")
-	set statusline=%#StatusLine#%#AA#\ %#BB#\ %#CC#\ %#DD#\ %#EE#\ %#FF#\ 
-endif
-set statusline+=%#Statusline#\  " så uvalgte vinduer ikke blir hvite
+set statusline=%#Statusline#\  " så uvalgte vinduer ikke blir hvite
 set statusline+=%m				" vis om filen er endret
 set statusline+=%f         		" stien til filen
 set statusline+=\ -\ 			" separator
@@ -256,7 +223,7 @@ set statusline+=%-4L	   		" totalt antall linjer
 let mapleader="\<space>"
 
 " endre størrelse på vindu med piltaster
-nnoremap <Up>		<C-W>+
+nnoremap <Up>		  <C-W>+
 nnoremap <Down>		<C-W>-
 nnoremap <Left>		<C-W><
 nnoremap <Right>	<C-W>>
@@ -266,7 +233,6 @@ nnoremap <F1>		:silent !start cmd<cr>
 nnoremap <F2>		:sp $myvimrc<cr>
 nnoremap <F3>		:so $myvimrc<cr>
 nnoremap <F4>		:call ToggleMarkdownMode()<cr>
-
 
 " div. modifikasjoner til bevegelser i vim
 nnoremap j gj
@@ -278,12 +244,18 @@ nnoremap L $
 nnoremap <c-e> <c-e>j
 nnoremap <c-y> <c-y>k
 
+" skifte tab
+nnoremap <leader><cr> gt
+nnoremap <leader><tab> gT
+nnoremap <leader><bs> :$tabnew 
+
 " øk/minske (gui) font-størrelsen
-nnoremap <leader><up>		:call IncGUIFontSize()<cr>
+nnoremap <leader><up>		  :call IncGUIFontSize()<cr>
 nnoremap <leader><down>		:call DecGUIFontSize()<cr>
 
 " vindu-greier:
 nnoremap <leader><leader> <c-w><c-w>
+nnoremap <leader>= <c-w>=
 nnoremap <leader>h <c-w>h
 nnoremap <leader>j <c-w>j
 nnoremap <leader>k <c-w>k
@@ -294,9 +266,9 @@ nnoremap <leader>K <c-w>K
 nnoremap <leader>L <c-w>L
 nnoremap <leader>w <c-w>o
 nnoremap <leader>q <c-w>q
-nnoremap <leader>f :sp . <cr>
+nnoremap <leader>f :sp 
 nnoremap <leader>F :sp<cr>
-nnoremap <leader>d :rightb vsp . <cr>
+nnoremap <leader>d :rightb vsp 
 nnoremap <leader>D :rightb vsp<cr>
 nnoremap <leader>t <c-w>r
 
