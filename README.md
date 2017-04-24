@@ -22,6 +22,15 @@
 		<a href="http://adventofcode.com/2016/day/11">dag 11</a>. Løser begge 
 		partene på litt over ett sekund. Ikke kommentert</p>
 
+<h3><a href="/A_star.cpp?ts=4">A_star.cpp</a></h3>
+<p>Visualiserer A\* algoritmen ved hjelp av SFML. (Skoleinnlevering. Kommentert 
+        på engelsk)</p>
+
+<h3><a href="/midpoint_displacement.cpp?ts=4">midpoint_displacement.cpp</a></h3>
+<p>Genererer et 2d landskap i SFML ved hjelp av 
+        "Midpoint Displacement"-algoritmen. (Skoleinnlevering. Kommentert på 
+        engelsk)</p>
+
 <h3><a href="/Screen.h?ts=4">Screen.h</a></h3>
 <p>Implementerer en slags tegneflate i 
 		kommandolinjen</p>
