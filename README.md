@@ -23,7 +23,7 @@
 		partene på litt over ett sekund. Ikke kommentert</p>
 
 <h3><a href="/A_star.cpp?ts=4">A_star.cpp</a></h3>
-<p>Visualiserer A\* algoritmen ved hjelp av SFML. (Skoleinnlevering. Kommentert 
+<p>Visualiserer A* algoritmen ved hjelp av SFML. (Skoleinnlevering. Kommentert 
         på engelsk)</p>
 
 <h3><a href="/midpoint_displacement.cpp?ts=4">midpoint_displacement.cpp</a></h3>
