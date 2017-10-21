@@ -39,8 +39,8 @@
 <p>Lar deg tegne tegninger og eksportere dem som 
 		svg-filer</p>
 
-<h3><a href="/vimrc.vim?ts=4">vimrc</a></h3>
-<p>Min vimrc</p>
+<h3><a href="/vimrc.vim?ts=4">vimrc.vim</a> og <a href="/.vimrc?ts=4">.vimrc</a></h3>
+<p>Vimrcene mine i Windows og Linux (vil samkjøre disse til én etterhvert)</p>
 
 </br></br>
 
