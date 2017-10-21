@@ -26,7 +26,7 @@ int abs(int num) {
 // A single tile in the Tilemap. Stores g, h -values and x, y -coordinates 
 //  internally for simplicity. (g set to a large number to imitate infinity)
 struct Tile {
-    std::size_t x = 0, y = 0;       // Positin in grid (used to find neighbors)
+    std::size_t x = 0, y = 0;       // Position in grid (used to find neighbors)
     float g = 999999, h = 0;        // g: dist from goal, h: heuristic
 
     bool traversable = true;        // is this tile traverable?
