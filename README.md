@@ -1,4 +1,4 @@
-<h1>Uberkule prosjekt jeg jobber på havner her</h1>
+<h1>Samling av små én-filers, header-only C++ prosjekter</h1>
 
 </br>
 
