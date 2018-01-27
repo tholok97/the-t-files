@@ -131,7 +131,7 @@ set expandtab
 set number
 set backspace=2
 set cc=80
-set scrolloff=10
+set scrolloff=3 " was 10
 set encoding=utf-8
 set smartcase
 set ignorecase
@@ -148,7 +148,7 @@ set laststatus=2
 set autowrite
 
 " language specific settings
-augroup cpp_specific
+augroup lang_specific
     autocmd Filetype cpp setlocal cindent
     autocmd Filetype go let g:go_highlight_structs = 1 
     autocmd Filetype go let g:go_highlight_methods = 1
@@ -156,6 +156,12 @@ augroup cpp_specific
     autocmd Filetype go let g:go_highlight_operators = 1
     autocmd Filetype go let g:go_highlight_build_constraints = 1
     autocmd Filetype go let g:go_list_type = "quickfix"
+    autocmd Filetype go let g:go_fmt_command = 'goimports'
+    autocmd Filetype php setlocal makeprg=php\ -l\ %
+    autocmd Filetype php setlocal errorformat=%m\ in\ %f\ on\ line\ %l,%-GErrors\ parsing\ %f,%-G
+    autocmd Filetype php nnoremap <buffer> ø :make<cr>
+    autocmd Filetype pandoc nnoremap <buffer> ø :!pandoc % -o %:r.pdf --from markdown --template eisvogel --listings<cr>
+    autocmd Filetype pandoc nnoremap <buffer> Ø :!evince %:r.pdf<cr>
 augroup END
 
 "}}}
@@ -199,9 +205,12 @@ if version >= 700
         autocmd InsertLeave * highlight ntt ctermbg=0 guibg=Black ctermfg=2
                 \ guifg=darkgreen
         autocmd CursorHold * echo "Whatareyouwaitingfoooooooooooooooooooooooor!"
-    autocmd FileType vim setlocal foldmethod=marker
+        autocmd FileType vim setlocal foldmethod=marker
         autocmd Filetype vim setlocal foldlevelstart=0
         autocmd FileType vim setlocal foldcolumn=2
+        autocmd FileType i3 setlocal foldmethod=marker
+        autocmd Filetype i3 setlocal foldlevelstart=0
+        autocmd FileType i3 setlocal foldcolumn=2
     augroup END
 endif
 "}}}
@@ -258,8 +267,6 @@ nnoremap j gj
 nnoremap k gk
 inoremap jk <esc>
 nnoremap Y y$
-nnoremap <c-e> <c-e>j
-nnoremap <c-y> <c-y>k
 
 " skifte tab
 nnoremap <leader><cr> gt
@@ -375,6 +382,18 @@ augroup filetype_specific_stuff
     autocmd FileType go nnoremap <buffer> <leader>x         mq0xx`qhh
     autocmd FileType go vnoremap <buffer> <leader>c         omq0<S-i>//<esc>`qll
     autocmd FileType go vnoremap <buffer> <leader>x         omq0o0lx`qhh
+    autocmd FileType i3 nnoremap <buffer> <leader>b :call
+            \ MakeTitle("#")<cr>
+    autocmd FileType i3 nnoremap <buffer> <leader>c     mq0i#<esc>`ql
+    autocmd FileType i3 nnoremap <buffer> <leader>x     mq0x`qh
+    autocmd FileType i3 vnoremap <buffer> <leader>c     omq0<S-i>#<esc>`ql
+    autocmd FileType i3 vnoremap <buffer> <leader>x     omq0o0x`qh
+    autocmd FileType Dockerfile nnoremap <buffer> <leader>b :call
+            \ MakeTitle("#")<cr>
+    autocmd FileType Dockerfile nnoremap <buffer> <leader>c     mq0i#<esc>`ql
+    autocmd FileType Dockerfile nnoremap <buffer> <leader>x     mq0x`qh
+    autocmd FileType Dockerfile vnoremap <buffer> <leader>c     omq0<S-i>#<esc>`ql
+    autocmd FileType Dockerfile vnoremap <buffer> <leader>x     omq0o0x`qh
     autocmd FileType qf nnoremap <buffer> j j
     autocmd FileType qf nnoremap <buffer> k k
     "autocmd FileType qf nnoremap <buffer> <bs> <C-W><cr>:call
@@ -392,3 +411,24 @@ execute pathogen#infect()
 """"let g:ycm_autoclose_preview_window_after_insertion = 1
 
 "}}}
+
+set switchbuf=usetab
+set autoindent
+"setlocal formatoptions=ctnqro
+"setlocal comments+=n:*,n:#
+
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
+set nospell
+
+nnoremap  3
+nnoremap  3
+
+" emmet reference: https://raw.githubusercontent.com/mattn/emmet-vim/master/TUTORIAL
+
+augroup asm_stuff
+    autocmd!
+    autocmd FileType asm nnoremap <buffer> ø :!make %<cr>
+
+augroup END
